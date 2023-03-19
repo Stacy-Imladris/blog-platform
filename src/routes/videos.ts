@@ -106,10 +106,10 @@ export const getVideosRouter = (db: DBType) => {
             errorObject.errorsMessages.push(createErrorObject('minAgeRestriction'))
         }
         if (!!canBeDownloaded && typeof canBeDownloaded !== 'boolean') {
-            errorObject.errorsMessages.push(createErrorObject('minAgeRestriction'))
+            errorObject.errorsMessages.push(createErrorObject('canBeDownloaded'))
         }
         if (!!publicationDate && typeof publicationDate !== 'string') {
-            errorObject.errorsMessages.push(createErrorObject('minAgeRestriction'))
+            errorObject.errorsMessages.push(createErrorObject('publicationDate'))
         }
 
         if (!!errorObject.errorsMessages.length) {
