@@ -11,6 +11,7 @@ import {CreateVideoModel} from '../models/CreateVideoModel';
 import {UpdateVideoModel} from '../models/UpdateVideoModel';
 import {DBType, VideosType} from '../db/db';
 import {
+    availableResolutionsArray,
     createErrorObject,
     HTTP_STATUSES,
     validateRequiredStringDataFromBody
@@ -48,7 +49,7 @@ export const getVideosRouter = (db: DBType) => {
 
         if (titleError) errorObject.errorsMessages.push(titleError)
         if (authorError) errorObject.errorsMessages.push(authorError)
-        if (availableResolutions && !availableResolutions.length) errorObject.errorsMessages.push(createErrorObject('availableResolutions'))
+        if (availableResolutions && (!availableResolutions.length || availableResolutions.some(el => !availableResolutionsArray.includes(el)))) errorObject.errorsMessages.push(createErrorObject('availableResolutions'))
 
         if (!!errorObject.errorsMessages.length) {
             res.status(HTTP_STATUSES.BAD_REQUEST_400).json(errorObject)
@@ -98,8 +99,18 @@ export const getVideosRouter = (db: DBType) => {
 
         if (titleError) errorObject.errorsMessages.push(titleError)
         if (authorError) errorObject.errorsMessages.push(authorError)
-        if (availableResolutions && !availableResolutions.length) errorObject.errorsMessages.push(createErrorObject('availableResolutions'))
-        if (!!minAgeRestriction && (minAgeRestriction > 18 || minAgeRestriction < 1)) errorObject.errorsMessages.push(createErrorObject('canBeDownloaded'))
+        if (availableResolutions && !availableResolutions.length) {
+            errorObject.errorsMessages.push(createErrorObject('availableResolutions'))
+        }
+        if (!!minAgeRestriction && (minAgeRestriction > 18 || minAgeRestriction < 1)) {
+            errorObject.errorsMessages.push(createErrorObject('minAgeRestriction'))
+        }
+        if (!!canBeDownloaded && typeof canBeDownloaded !== 'boolean') {
+            errorObject.errorsMessages.push(createErrorObject('minAgeRestriction'))
+        }
+        if (!!publicationDate && typeof publicationDate !== 'string') {
+            errorObject.errorsMessages.push(createErrorObject('minAgeRestriction'))
+        }
 
         if (!!errorObject.errorsMessages.length) {
             res.status(HTTP_STATUSES.BAD_REQUEST_400).json(errorObject)

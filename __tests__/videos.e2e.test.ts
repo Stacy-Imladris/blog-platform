@@ -1,6 +1,6 @@
 import request from 'supertest';
 import {app} from '../src/app';
-import {HTTP_STATUSES} from '../src/utils';
+import {createErrorObject, HTTP_STATUSES} from '../src/utils';
 import {CreateVideoModel} from '../src/models/CreateVideoModel';
 import {UpdateVideoModel} from '../src/models/UpdateVideoModel';
 
@@ -21,7 +21,7 @@ describe('/videos', () => {
             .expect(HTTP_STATUSES.NOT_FOUND_404)
     })
 
-    it('shouldn\'t create video with incorrect input data', async () => {
+    it('shouldn\'t create video with incorrect title data', async () => {
         const data: CreateVideoModel = {
             title: '',
             author: 'Stacy',
@@ -31,6 +31,24 @@ describe('/videos', () => {
         await getRequest().post('/videos')
             .send(data)
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
+
+        await getRequest()
+            .get('/videos')
+            .expect(HTTP_STATUSES.OK_200, [])
+    })
+
+    it('shouldn\'t create video with incorrect availableResolutions data', async () => {
+        const data = {
+            title: 'New video title',
+            author: 'Stacy',
+            availableResolutions: ['P240', 'Invalid']
+        }
+
+        await getRequest().post('/videos')
+            .send(data)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400, {
+                errorsMessages: [createErrorObject('availableResolutions')]
+            })
 
         await getRequest()
             .get('/videos')
@@ -99,11 +117,31 @@ describe('/videos', () => {
             .expect(HTTP_STATUSES.OK_200, [createdVideo1, createdVideo2])
     })
 
-    it('shouldn\'t update video with incorrect input data', async () => {
+    it('shouldn\'t update video with incorrect title data', async () => {
         const data: UpdateVideoModel = {
             title: '   ',
             author: 'Dima',
             availableResolutions: ['P2160'],
+        }
+
+        await getRequest()
+            .put(`/videos/${createdVideo1.id}`)
+            .send(data)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
+
+        await getRequest()
+            .get(`/videos/${createdVideo1.id}`)
+            .expect(HTTP_STATUSES.OK_200, createdVideo1)
+    })
+
+    it('shouldn\'t update video with incorrect \'title\' and \'canBeDownloaded\' data', async () => {
+        const data = {
+            title: null,
+            author: "valid author",
+            availableResolutions: ["P144","P240","P720"],
+            canBeDownloaded: "string",
+            minAgeRestriction: 17,
+            publicationDate: "2023-03-22T19:50:46.412Z"
         }
 
         await getRequest()
