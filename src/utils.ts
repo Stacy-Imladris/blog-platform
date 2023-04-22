@@ -3,6 +3,7 @@ export const HTTP_STATUSES = {
     CREATED_201: 201,
     NO_CONTENT_204: 204,
     BAD_REQUEST_400: 400,
+    NOT_AUTHORIZED_401: 401,
     NOT_FOUND_404: 404
 }
 
@@ -21,3 +22,6 @@ export const createErrorObject = (field: string) => ({
     field,
     message: `Invalid ${field} data`
 })
+
+export const isResolutionsInvalid = (resolutions: string[]) => resolutions
+    .some(el => !availableResolutionsArray.includes(el))

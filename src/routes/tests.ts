@@ -6,6 +6,8 @@ export const getTestsRouter = (db: DBType) => {
     const router = express.Router()
 
     router.delete('/all-data', (req, res) => {
+        db.blogs = []
+        db.posts = []
         db.videos = []
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
     })

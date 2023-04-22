@@ -1,17 +1,35 @@
 import {AvailableResolutionsEnum, Nullable} from '../types';
 
-export type VideosType = {
-    id: number
-    title: string
-    author: string
-    canBeDownloaded: boolean
-    minAgeRestriction: Nullable<number>
-    createdAt: string
-    publicationDate: string
-    availableResolutions: Array<keyof typeof AvailableResolutionsEnum>
-}
+export const header = 'authorization'
+export const token = 'Basic YWRtaW46cXdlcnR5'
 
 export const db: DBType = {
+    blogs: [
+        {
+            id: '0',
+            name: 'Google',
+            description: 'Google blog',
+            websiteUrl: 'https://www.google.com/'
+        }
+    ],
+    posts: [
+        {
+            id: '0',
+            title: 'Post 1',
+            shortDescription: 'Description for post 1',
+            content: 'Content of post 1',
+            blogId: '0',
+            blogName: 'string',
+        },
+        {
+            id: '1',
+            title: 'Post 2',
+            shortDescription: 'Description for post 2',
+            content: 'Content of post 2',
+            blogId: '0',
+            blogName: 'Google',
+        }
+    ],
     videos: [
         {
             id: 0,
@@ -24,7 +42,7 @@ export const db: DBType = {
             availableResolutions: ['P480', 'P1080']
         },
         {
-            id: 0,
+            id: 1,
             title: 'CSS',
             author: 'Sveta',
             canBeDownloaded: true,
@@ -46,6 +64,36 @@ export const db: DBType = {
     ]
 }
 
+//types
 export type DBType = {
-    videos: VideosType[]
+    blogs: BlogType[]
+    posts: PostType[]
+    videos: VideoType[]
+}
+
+export type BlogType = {
+    id: string
+    name: string
+    description: string
+    websiteUrl: string
+}
+
+export type PostType = {
+    id: string
+    title: string
+    shortDescription: string
+    content: string
+    blogId: string
+    blogName: string
+}
+
+export type VideoType = {
+    id: number
+    title: string
+    author: string
+    canBeDownloaded: boolean
+    minAgeRestriction: Nullable<number>
+    createdAt: string
+    publicationDate: string
+    availableResolutions: Array<keyof typeof AvailableResolutionsEnum>
 }

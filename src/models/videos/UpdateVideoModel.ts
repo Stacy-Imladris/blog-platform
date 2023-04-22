@@ -1,4 +1,4 @@
-import {AvailableResolutionsEnum, Nullable} from '../types';
+import {AvailableResolutionsEnum, Nullable} from '../../types';
 
 export type UpdateVideoModel = {
     title: string

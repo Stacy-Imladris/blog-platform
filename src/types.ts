@@ -23,6 +23,6 @@ export type APIErrorResultType = {
 }
 
 export type FieldErrorType = {
-    message: string
-    field: string
+    message: Nullable<string>
+    field: Nullable<string>
 }

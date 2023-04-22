@@ -1,8 +1,8 @@
 import request from 'supertest';
 import {app} from '../src/app';
 import {createErrorObject, HTTP_STATUSES} from '../src/utils';
-import {CreateVideoModel} from '../src/models/CreateVideoModel';
-import {UpdateVideoModel} from '../src/models/UpdateVideoModel';
+import {CreateVideoModel} from '../src/models/videos/CreateVideoModel';
+import {UpdateVideoModel} from '../src/models/videos/UpdateVideoModel';
 
 const getRequest = () => request(app)
 
@@ -122,6 +122,23 @@ describe('/videos', () => {
             title: '   ',
             author: 'Dima',
             availableResolutions: ['P2160'],
+        }
+
+        await getRequest()
+            .put(`/videos/${createdVideo1.id}`)
+            .send(data)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
+
+        await getRequest()
+            .get(`/videos/${createdVideo1.id}`)
+            .expect(HTTP_STATUSES.OK_200, createdVideo1)
+    })
+
+    it('shouldn\'t update video with incorrect availableResolutions data', async () => {
+        const data = {
+            title: 'New correct title',
+            author: 'Alex',
+            availableResolutions: ['P2160', 'wrong resolution'],
         }
 
         await getRequest()
