@@ -55,6 +55,32 @@ describe('/blogs', () => {
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
+    it('should be one error for websiteUrl field', async () => {
+        const data: CreateBlogModel = {
+            name: 'Blog name',
+            description: 'Blog description',
+            websiteUrl: 'wrong-url-'.repeat(11)
+        }
+
+        const response = await getRequest().post('/blogs')
+            .set(header, token)
+            .send(data)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
+
+        const errors = response.body
+
+        expect(errors).toEqual({
+            errorsMessages: [{
+                message: 'Value \'websiteUrl\' should be with max length of 100',
+                field: 'websiteUrl'
+            }]
+        })
+
+        await getRequest()
+            .get('/blogs')
+            .expect(HTTP_STATUSES.OK_200, [])
+    })
+
     let createdBlog1: any = null
     it('should create blog with correct input data', async () => {
         const data: CreateBlogModel = {

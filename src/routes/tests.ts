@@ -1,14 +1,13 @@
 import express from 'express';
-import {DBType} from '../db/db';
 import {HTTP_STATUSES} from '../utils';
+import {testsRepository} from '../repositories/tests-repository';
 
-export const getTestsRouter = (db: DBType) => {
+export const getTestsRouter = () => {
     const router = express.Router()
 
     router.delete('/all-data', (req, res) => {
-        db.blogs = []
-        db.posts = []
-        db.videos = []
+        testsRepository.deleteAllData()
+
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
     })
 

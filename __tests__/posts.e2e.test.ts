@@ -4,6 +4,7 @@ import {HTTP_STATUSES} from '../src/utils';
 import {CreatePostModel} from '../src/models/posts/CreatePostModel';
 import {UpdatePostModel} from '../src/models/posts/UpdatePostModel';
 import {header, token} from '../src/db/db';
+import {CreateBlogModel} from '../src/models/blogs/CreateBlogModel';
 
 const getRequest = () => request(app)
 
@@ -39,6 +40,24 @@ describe('/posts', () => {
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
+    it('shouldn\'t create post with not existing blog id', async () => {
+        const data: CreatePostModel = {
+            title: 'Correct post title',
+            shortDescription: 'Description of new post',
+            content: 'Content of new post',
+            blogId: '-999'
+        }
+
+        await getRequest().post('/posts')
+            .set(header, token)
+            .send(data)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
+
+        await getRequest()
+            .get('/posts')
+            .expect(HTTP_STATUSES.OK_200, [])
+    })
+
     it('shouldn\'t create post with incorrect title data', async () => {
         const data: CreatePostModel = {
             title: '',
@@ -57,13 +76,27 @@ describe('/posts', () => {
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
+    let createdBlog: any = null
     let createdPost1: any = null
     it('should create post with correct input data', async () => {
+        const newBlog: CreateBlogModel = {
+            name: 'Blog name 1',
+            description: 'Blog description 1',
+            websiteUrl: 'https://first-website.com'
+        }
+
+        const {body} = await getRequest()
+            .post('/blogs')
+            .set(header, token)
+            .send(newBlog)
+
+        createdBlog = body
+
         const data: CreatePostModel = {
             title: 'New post',
             shortDescription: 'Description of new post',
             content: 'Content of new post',
-            blogId: 'Blog id'
+            blogId: createdBlog.id
         }
 
         const createResponse = await getRequest()
@@ -94,7 +127,7 @@ describe('/posts', () => {
             title: 'New post 2',
             shortDescription: 'Description of new post 2',
             content: 'Content of new post 2',
-            blogId: 'Blog id 2'
+            blogId: createdBlog.id
         }
 
         const createResponse = await getRequest()
@@ -124,7 +157,7 @@ describe('/posts', () => {
             title: '',
             shortDescription: 'Description of new post',
             content: 'Content of new post',
-            blogId: 'Blog id'
+            blogId: createdBlog.id
         }
 
         await getRequest()
@@ -143,7 +176,7 @@ describe('/posts', () => {
             title: 'Post',
             shortDescription: 'Description of new post',
             content: 'Content of new post',
-            blogId: 'Blog id'
+            blogId: createdBlog.id
         }
 
         await getRequest()
@@ -158,7 +191,7 @@ describe('/posts', () => {
             title: 'Post',
             shortDescription: 'Description of new post',
             content: 'Content of new post',
-            blogId: 'Blog id'
+            blogId: createdBlog.id
         }
 
         await getRequest()
