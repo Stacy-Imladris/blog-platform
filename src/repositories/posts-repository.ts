@@ -12,14 +12,14 @@ export const postsRepository = {
         return await postsCollection.findOne({id})
     },
 
-    async createPost(title: string, shortDescription: string, content: string, blogId: string): Promise<PostViewModel> {
+    async createPost(title: string, shortDescription: string, content: string, blogId: string, blogName: string): Promise<PostViewModel> {
         const newPost: PostType = {
             id: v1(),
             title,
             shortDescription,
             content,
             blogId,
-            blogName: 'Blog name',
+            blogName,
             createdAt: new Date().toISOString(),
         }
 
@@ -28,8 +28,8 @@ export const postsRepository = {
         return newPost
     },
 
-    async updatePost(id: string, title: string, shortDescription: string, content: string, blogId: string): Promise<boolean> {
-        const result = await postsCollection.updateOne({id}, {$set: {title, shortDescription, content, blogId}})
+    async updatePost(id: string, title: string, shortDescription: string, content: string, blogId: string, blogName: string): Promise<boolean> {
+        const result = await postsCollection.updateOne({id}, {$set: {title, shortDescription, content, blogId, blogName}})
 
         return !!result.matchedCount
     },
