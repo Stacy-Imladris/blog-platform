@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from 'express';
 import {HTTP_STATUSES} from '../utils';
-import {header, token} from '../db/db';
+import {header, token} from '../db/__db';
 
 export const basicAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const authToken = req.headers[header]

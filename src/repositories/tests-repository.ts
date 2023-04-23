@@ -1,9 +1,9 @@
-import {db} from '../db/db';
+import {__db} from '../db/__db';
 
 export const testsRepository = {
-    deleteAllData() {
-        db.blogs = []
-        db.posts = []
-        db.videos = []
+    async deleteAllData(): Promise<void> {
+        __db.blogs = []
+        __db.posts = []
+        __db.videos = []
     }
 }

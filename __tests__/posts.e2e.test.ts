@@ -3,7 +3,7 @@ import {app} from '../src/app';
 import {HTTP_STATUSES} from '../src/utils';
 import {CreatePostModel} from '../src/models/posts/CreatePostModel';
 import {UpdatePostModel} from '../src/models/posts/UpdatePostModel';
-import {header, token} from '../src/db/db';
+import {header, token} from '../src/db/__db';
 import {CreateBlogModel} from '../src/models/blogs/CreateBlogModel';
 
 const getRequest = () => request(app)

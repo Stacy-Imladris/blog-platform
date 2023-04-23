@@ -5,8 +5,8 @@ import {testsRepository} from '../repositories/tests-repository';
 export const getTestsRouter = () => {
     const router = express.Router()
 
-    router.delete('/all-data', (req, res) => {
-        testsRepository.deleteAllData()
+    router.delete('/all-data', async (req, res) => {
+        await testsRepository.deleteAllData()
 
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
     })

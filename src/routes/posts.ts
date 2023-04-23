@@ -18,15 +18,15 @@ import {
 export const getPostsRouter = () => {
     const router = express.Router()
 
-    router.get('/', (req: Request, res: Response<PostViewModel[]>) => {
-        const foundPosts = postsRepository.findPosts()
+    router.get('/', async (req: Request, res: Response<PostViewModel[]>) => {
+        const foundPosts = await postsRepository.findPosts()
 
         res.json(foundPosts)
     })
 
-    router.get('/:id', (req: RequestWithParams<URIParamsPostIdModel>,
+    router.get('/:id', async (req: RequestWithParams<URIParamsPostIdModel>,
                              res: Response<PostViewModel>) => {
-        const foundPost = postsRepository.findBlogById(req.params.id)
+        const foundPost = await postsRepository.findBlogById(req.params.id)
 
         if (!foundPost) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -36,18 +36,18 @@ export const getPostsRouter = () => {
         res.json(foundPost)
     })
 
-    router.post('/', basicAuthMiddleware, postTitleValidator, postShortDescriptionValidator, postContentValidator, postBlogIdValidator, inputValidationMiddleware, (req: RequestWithBody<CreatePostModel>, res: Response<PostViewModel>) => {
+    router.post('/', basicAuthMiddleware, postTitleValidator, postShortDescriptionValidator, postContentValidator, postBlogIdValidator, inputValidationMiddleware, async (req: RequestWithBody<CreatePostModel>, res: Response<PostViewModel>) => {
         const {title, shortDescription, content, blogId} = req.body
 
-        const newPost = postsRepository.createPost(title, shortDescription, content, blogId)
+        const newPost = await postsRepository.createPost(title, shortDescription, content, blogId)
 
         res.status(HTTP_STATUSES.CREATED_201).json(newPost)
     })
 
-    router.put('/:id', basicAuthMiddleware, postTitleValidator, postShortDescriptionValidator, postContentValidator, postBlogIdValidator, inputValidationMiddleware, (req: RequestWithParamsAndBody<URIParamsPostIdModel, UpdatePostModel>, res) => {
+    router.put('/:id', basicAuthMiddleware, postTitleValidator, postShortDescriptionValidator, postContentValidator, postBlogIdValidator, inputValidationMiddleware, async (req: RequestWithParamsAndBody<URIParamsPostIdModel, UpdatePostModel>, res) => {
         const {title, shortDescription, content, blogId} = req.body
 
-        const isUpdated = postsRepository.updatePost(req.params.id, title, shortDescription, content, blogId)
+        const isUpdated = await postsRepository.updatePost(req.params.id, title, shortDescription, content, blogId)
 
         if (isUpdated) {
             res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
@@ -56,9 +56,9 @@ export const getPostsRouter = () => {
         }
     })
 
-    router.delete('/:id', basicAuthMiddleware, (req: RequestWithParams<URIParamsPostIdModel>,
+    router.delete('/:id', basicAuthMiddleware, async (req: RequestWithParams<URIParamsPostIdModel>,
                                 res) => {
-        const isDeleted = postsRepository.deletePost(req.params.id)
+        const isDeleted = await postsRepository.deletePost(req.params.id)
 
         if (isDeleted) {
             res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)

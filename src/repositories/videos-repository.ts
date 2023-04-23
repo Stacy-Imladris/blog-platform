@@ -1,9 +1,10 @@
 import {AvailableResolutionsEnum, Nullable} from '../types';
-import {db, VideoType} from '../db/db';
+import {__db, VideoType} from '../db/__db';
+import {VideoViewModel} from '../models/videos/VideoViewModel';
 
 export const videosRepository = {
-    findVideos(title: string | undefined) {
-        let foundVideos = db.videos
+    async findVideos(title: string | undefined): Promise<VideoViewModel[]> {
+        let foundVideos = __db.videos
 
         if (title) {
             foundVideos = foundVideos.filter(el => el.title.toLowerCase().includes(title?.toString().toLowerCase()))
@@ -12,15 +13,15 @@ export const videosRepository = {
         return foundVideos
     },
 
-    findVideoById(id: number) {
-        return db.videos.find(el => el.id === id)
+    async findVideoById(id: number): Promise<VideoViewModel | undefined> {
+        return __db.videos.find(el => el.id === id)
     },
 
-    createVideo(title: string, author: string, availableResolutions: Array<keyof typeof AvailableResolutionsEnum>) {
+    async createVideo(title: string, author: string, availableResolutions: Array<keyof typeof AvailableResolutionsEnum>): Promise<VideoViewModel> {
         const date = new Date()
 
         const newVideo: VideoType = {
-            id: db.videos.length,
+            id: __db.videos.length,
             title,
             author,
             availableResolutions,
@@ -30,13 +31,13 @@ export const videosRepository = {
             publicationDate: new Date(date.setDate(date.getDate() + 1)).toISOString()
         }
 
-        db.videos.push(newVideo)
+        __db.videos.push(newVideo)
 
         return newVideo
     },
 
-    updateVideo(id: number, title: string, author: string, canBeDownloaded: boolean | undefined, availableResolutions: Array<keyof typeof AvailableResolutionsEnum>, publicationDate: string | undefined, minAgeRestriction: Nullable<number> | undefined) {
-        let videoForUpdate = db.videos.find(el => el.id === id)
+    async updateVideo(id: number, title: string, author: string, canBeDownloaded: boolean | undefined, availableResolutions: Array<keyof typeof AvailableResolutionsEnum>, publicationDate: string | undefined, minAgeRestriction: Nullable<number> | undefined): Promise<boolean> {
+        let videoForUpdate = __db.videos.find(el => el.id === id)
 
         if (videoForUpdate) {
             videoForUpdate.title = title
@@ -51,11 +52,11 @@ export const videosRepository = {
         }
     },
 
-    deleteVideo(id: number) {
-        const videoToDelete = db.videos.find(el => el.id === id)
+    async deleteVideo(id: number): Promise<boolean> {
+        const videoToDelete = __db.videos.find(el => el.id === id)
 
         if (videoToDelete) {
-            db.videos = db.videos.filter(f => f.id !== id)
+            __db.videos = __db.videos.filter(f => f.id !== id)
             return true
         } else {
             return false

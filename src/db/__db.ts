@@ -3,13 +3,15 @@ import {AvailableResolutionsEnum, Nullable} from '../types';
 export const header = 'authorization'
 export const token = 'Basic YWRtaW46cXdlcnR5'
 
-export const db: DBType = {
+export const __db: DBType = {
     blogs: [
         {
             id: '0',
             name: 'Google',
             description: 'Google blog',
-            websiteUrl: 'https://www.google.com/'
+            websiteUrl: 'https://www.google.com/',
+            createdAt: '2023-03-21T16:15:21.034Z',
+            isMembership: false
         }
     ],
     posts: [
@@ -20,6 +22,7 @@ export const db: DBType = {
             content: 'Content of post 1',
             blogId: '0',
             blogName: 'string',
+            createdAt: '2023-03-22T17:15:21.034Z'
         },
         {
             id: '1',
@@ -28,6 +31,7 @@ export const db: DBType = {
             content: 'Content of post 2',
             blogId: '0',
             blogName: 'Google',
+            createdAt: '2023-03-23T18:15:21.034Z'
         }
     ],
     videos: [
@@ -76,6 +80,8 @@ export type BlogType = {
     name: string
     description: string
     websiteUrl: string
+    createdAt: string
+    isMembership: boolean
 }
 
 export type PostType = {
@@ -85,6 +91,7 @@ export type PostType = {
     content: string
     blogId: string
     blogName: string
+    createdAt: string
 }
 
 export type VideoType = {

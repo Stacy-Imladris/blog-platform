@@ -23,15 +23,15 @@ import {
 export const getBlogsRouter = () => {
     const router = express.Router()
 
-    router.get('/', (req: RequestWithQuery<QueryBlogsModel>, res: Response<BlogViewModel[]>) => {
-        const foundBlogs = blogsRepository.findBlogs(req.query.searchNameTerm?.toString())
+    router.get('/', async (req: RequestWithQuery<QueryBlogsModel>, res: Response<BlogViewModel[]>) => {
+        const foundBlogs = await blogsRepository.findBlogs(req.query.searchNameTerm?.toString())
 
         res.json(foundBlogs)
     })
 
-    router.get('/:id', (req: RequestWithParams<URIParamsBlogIdModel>,
+    router.get('/:id', async (req: RequestWithParams<URIParamsBlogIdModel>,
                              res: Response<BlogViewModel>) => {
-        const foundBlog = blogsRepository.findBlogById(req.params.id)
+        const foundBlog = await blogsRepository.findBlogById(req.params.id)
 
         if (!foundBlog) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -41,18 +41,18 @@ export const getBlogsRouter = () => {
         res.json(foundBlog)
     })
 
-    router.post('/', basicAuthMiddleware, blogNameValidator, blogDescriptionValidator, blogWebsiteUrlValidator, inputValidationMiddleware, (req: RequestWithBody<CreateBlogModel>, res: Response<BlogViewModel>) => {
+    router.post('/', basicAuthMiddleware, blogNameValidator, blogDescriptionValidator, blogWebsiteUrlValidator, inputValidationMiddleware, async (req: RequestWithBody<CreateBlogModel>, res: Response<BlogViewModel>) => {
         const {name, description, websiteUrl} = req.body
 
-        const newBlog = blogsRepository.createBlog(name, description, websiteUrl)
+        const newBlog = await blogsRepository.createBlog(name, description, websiteUrl)
 
         res.status(HTTP_STATUSES.CREATED_201).json(newBlog)
     })
 
-    router.put('/:id', basicAuthMiddleware, blogNameValidator, blogDescriptionValidator, blogWebsiteUrlValidator, inputValidationMiddleware, (req: RequestWithParamsAndBody<URIParamsBlogIdModel, UpdateBlogModel>, res) => {
+    router.put('/:id', basicAuthMiddleware, blogNameValidator, blogDescriptionValidator, blogWebsiteUrlValidator, inputValidationMiddleware, async (req: RequestWithParamsAndBody<URIParamsBlogIdModel, UpdateBlogModel>, res) => {
         const {name, description, websiteUrl} = req.body
 
-        const isUpdated = blogsRepository.updateBlog(req.params.id, name, description, websiteUrl)
+        const isUpdated = await blogsRepository.updateBlog(req.params.id, name, description, websiteUrl)
 
         if (isUpdated) {
             res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
@@ -61,8 +61,8 @@ export const getBlogsRouter = () => {
         }
     })
 
-    router.delete('/:id', basicAuthMiddleware, (req: RequestWithParams<URIParamsBlogIdModel>, res) => {
-        const isDeleted = blogsRepository.deleteBlog(req.params.id)
+    router.delete('/:id', basicAuthMiddleware, async (req: RequestWithParams<URIParamsBlogIdModel>, res) => {
+        const isDeleted = await blogsRepository.deleteBlog(req.params.id)
 
         if (isDeleted) {
             res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)

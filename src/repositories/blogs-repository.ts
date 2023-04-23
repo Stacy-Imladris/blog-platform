@@ -1,56 +1,47 @@
-import {BlogType, db} from '../db/db';
+import {BlogType} from '../db/__db';
+import {BlogViewModel} from '../models/blogs/BlogViewModel';
+import {blogsCollection} from './db';
+import {v1} from 'uuid';
 
 export const blogsRepository = {
-    findBlogs(searchNameTerm: string | undefined) {
-        let foundBlogs = db.blogs
+    async findBlogs(searchNameTerm: string | undefined): Promise<BlogViewModel[]> {
+        const filter: any = {}
 
         if (searchNameTerm) {
-            foundBlogs = foundBlogs.filter(el => el.name.toLowerCase().includes(searchNameTerm?.toString().toLowerCase()))
+            filter.title = {$regex: searchNameTerm}
         }
 
-        return foundBlogs
+        return await blogsCollection.find(filter).toArray()
     },
 
-    findBlogById(id: string) {
-        return db.blogs.find(el => el.id === id)
+    async findBlogById(id: string): Promise<BlogViewModel | null> {
+        return await blogsCollection.findOne({id})
     },
 
-    createBlog(name: string, description: string, websiteUrl: string) {
+    async createBlog(name: string, description: string, websiteUrl: string): Promise<BlogViewModel> {
         const newBlog: BlogType = {
-            id: db.blogs.length.toString(),
+            id: v1(),
             name,
             description,
-            websiteUrl
+            websiteUrl,
+            createdAt: new Date().toISOString(),
+            isMembership: false
         }
 
-        db.blogs.push(newBlog)
+        await blogsCollection.insertOne(newBlog)
 
         return newBlog
     },
 
-    updateBlog(id: string, name: string, description: string, websiteUrl: string) {
-        let blogForUpdate = db.blogs.find(el => el.id === id)
+    async updateBlog(id: string, name: string, description: string, websiteUrl: string): Promise<boolean> {
+        const result = await blogsCollection.updateOne({id}, {$set: {name, description, websiteUrl}})
 
-        if (blogForUpdate) {
-            blogForUpdate.name = name
-            blogForUpdate.description = description
-            blogForUpdate.websiteUrl = websiteUrl
-
-            return true
-        } else {
-            return false
-        }
+        return !!result.matchedCount
     },
 
-    deleteBlog(id: string) {
-        const blogToDelete = db.blogs.find(el => el.id === id)
+    async deleteBlog(id: string): Promise<boolean> {
+        const result = await blogsCollection.deleteOne({id})
 
-        if (blogToDelete) {
-            db.blogs = db.blogs.filter(f => f.id !== id)
-
-            return true
-        } else {
-            return false
-        }
-    },
+        return !!result.deletedCount
+    }
 }
