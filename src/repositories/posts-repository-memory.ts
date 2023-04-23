@@ -17,7 +17,8 @@ export const postsRepository = {
             shortDescription,
             content,
             blogId,
-            blogName: 'Blog name'
+            blogName: 'Blog name',
+            createdAt: new Date().toISOString(),
         }
 
         __db.posts.push(newPost)

@@ -21,7 +21,9 @@ export const blogsRepository = {
             id: __db.blogs.length.toString(),
             name,
             description,
-            websiteUrl
+            websiteUrl,
+            createdAt: new Date().toISOString(),
+            isMembership: false
         }
 
         __db.blogs.push(newBlog)
