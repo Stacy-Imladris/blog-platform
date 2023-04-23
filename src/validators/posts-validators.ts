@@ -17,7 +17,7 @@ export const postContentValidator = body('content')
     .isLength({max: 1000}).withMessage('Value \'content\' should be with max length of 1000')
 
 export const postBlogIdValidator = body('blogId')
-    .custom(blogId => !!blogsRepository.findBlogById(blogId))
+    .custom(async blogId => !!(await blogsRepository.findBlogById(blogId)))
     .withMessage('Value \'blogId\' should be an id of existing blog')
     .isString().withMessage('Value \'blogId\' should be type string')
     .trim().notEmpty().withMessage('Value \'blogId\' is required and shouldn\'t be empty')
