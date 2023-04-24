@@ -41,7 +41,11 @@ export const getPostsRouter = () => {
 
         const newPost = await postsRepository.createPost(title, shortDescription, content, blogId)
 
-        res.status(HTTP_STATUSES.CREATED_201).json(newPost)
+        if (newPost) {
+            res.status(HTTP_STATUSES.CREATED_201).json(newPost)
+        }
+
+        res.status(HTTP_STATUSES.BAD_REQUEST_400)
     })
 
     router.put('/:id', basicAuthMiddleware, postTitleValidator, postShortDescriptionValidator, postContentValidator, postBlogIdValidator, inputValidationMiddleware, async (req: RequestWithParamsAndBody<URIParamsPostIdModel, UpdatePostModel>, res) => {

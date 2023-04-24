@@ -46,7 +46,11 @@ export const getBlogsRouter = () => {
 
         const newBlog = await blogsRepository.createBlog(name, description, websiteUrl)
 
-        res.status(HTTP_STATUSES.CREATED_201).json(newBlog)
+        if (newBlog) {
+            res.status(HTTP_STATUSES.CREATED_201).json(newBlog)
+        }
+
+        res.status(HTTP_STATUSES.BAD_REQUEST_400)
     })
 
     router.put('/:id', basicAuthMiddleware, blogNameValidator, blogDescriptionValidator, blogWebsiteUrlValidator, inputValidationMiddleware, async (req: RequestWithParamsAndBody<URIParamsBlogIdModel, UpdateBlogModel>, res) => {

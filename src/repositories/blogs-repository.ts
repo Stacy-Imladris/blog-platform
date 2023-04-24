@@ -1,6 +1,6 @@
 import {BlogType} from '../db/__db';
 import {BlogViewModel} from '../models/blogs/BlogViewModel';
-import {blogsCollection} from './db';
+import {blogsCollection, exclusionMongoId} from './db';
 import {v1} from 'uuid';
 
 export const blogsRepository = {
@@ -11,14 +11,14 @@ export const blogsRepository = {
             filter.title = {$regex: searchNameTerm}
         }
 
-        return await blogsCollection.find(filter).toArray()
+        return await blogsCollection.find(filter, exclusionMongoId).toArray()
     },
 
     async findBlogById(id: string): Promise<BlogViewModel | null> {
-        return await blogsCollection.findOne({id})
+        return await blogsCollection.findOne({id}, exclusionMongoId)
     },
 
-    async createBlog(name: string, description: string, websiteUrl: string): Promise<BlogViewModel> {
+    async createBlog(name: string, description: string, websiteUrl: string): Promise<BlogViewModel | null> {
         const newBlog: BlogType = {
             id: v1(),
             name,
@@ -28,9 +28,9 @@ export const blogsRepository = {
             isMembership: false
         }
 
-        await blogsCollection.insertOne(newBlog)
+        const {insertedId} = await blogsCollection.insertOne(newBlog)
 
-        return newBlog
+        return await blogsCollection.findOne({_id: insertedId}, exclusionMongoId)
     },
 
     async updateBlog(id: string, name: string, description: string, websiteUrl: string): Promise<boolean> {

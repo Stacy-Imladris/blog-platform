@@ -24,3 +24,5 @@ export async function runDB() {
         await client.close()
     }
 }
+
+export const exclusionMongoId = {projection: {_id: 0}}
