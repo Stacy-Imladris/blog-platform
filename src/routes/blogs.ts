@@ -68,6 +68,13 @@ export const getBlogsRouter = () => {
                               res: Response<PostsQueryResultType>) => {
         const params = getPostQueryParams(req.query)
 
+        const foundBlog = await blogsQueryRepository.findBlogById(req.params.id)
+
+        if (!foundBlog) {
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return
+        }
+
         const postsQueryResult = await postsQueryRepository.findPosts(params, req.params.id)
 
         res.json(postsQueryResult)
