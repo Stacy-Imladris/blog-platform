@@ -18,6 +18,7 @@ export async function runDB() {
     try {
         await client.connect()
         await client.db('blogs').command({ping: 1})
+
         console.log('Connected successfully to mongo server')
     } catch {
         console.log('Connection to mongo server failed')

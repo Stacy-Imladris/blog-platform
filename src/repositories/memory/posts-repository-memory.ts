@@ -1,5 +1,5 @@
-import {__db, PostType} from '../db/__db';
-import {PostViewModel} from '../models/posts/PostViewModel';
+import {__db, PostType} from '../../db/__db';
+import {PostViewModel} from '../../models/posts/PostViewModel';
 
 export const postsRepository = {
     async findPosts(): Promise<PostViewModel[]> {

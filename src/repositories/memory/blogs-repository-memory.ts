@@ -1,5 +1,5 @@
-import {BlogType, __db} from '../db/__db';
-import {BlogViewModel} from '../models/blogs/BlogViewModel';
+import {BlogType, __db} from '../../db/__db';
+import {BlogViewModel} from '../../models/blogs/BlogViewModel';
 
 export const blogsRepository = {
     async findBlogs(searchNameTerm: string | undefined): Promise<BlogViewModel[]> {

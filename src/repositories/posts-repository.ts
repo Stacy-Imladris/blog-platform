@@ -1,31 +1,12 @@
 import {PostType} from '../db/__db';
-import {PostViewModel} from '../models/posts/PostViewModel';
-import {exclusionMongoId, postsCollection} from './db';
-import {v1} from 'uuid';
+import {postsCollection} from '../db/db';
+import {ObjectId} from 'mongodb';
 
 export const postsRepository = {
-    async findPosts(): Promise<PostViewModel[]> {
-        return await postsCollection.find({}, exclusionMongoId).toArray()
-    },
+    async createPost(post: PostType): Promise<ObjectId> {
+        const {insertedId} = await postsCollection.insertOne(post)
 
-    async findBlogById(id: string): Promise<PostViewModel | null> {
-        return await postsCollection.findOne({id}, exclusionMongoId)
-    },
-
-    async createPost(title: string, shortDescription: string, content: string, blogId: string): Promise<PostViewModel | null> {
-        const newPost: PostType = {
-            id: v1(),
-            title,
-            shortDescription,
-            content,
-            blogId,
-            blogName: 'Blog name',
-            createdAt: new Date().toISOString(),
-        }
-
-        const {insertedId} = await postsCollection.insertOne(newPost)
-
-        return await postsCollection.findOne({_id: insertedId}, exclusionMongoId)
+        return insertedId
     },
 
     async updatePost(id: string, title: string, shortDescription: string, content: string, blogId: string): Promise<boolean> {

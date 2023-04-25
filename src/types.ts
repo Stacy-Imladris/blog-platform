@@ -3,6 +3,7 @@ import {Request} from 'express'
 export type RequestWithBody<T> = Request<{}, {}, T>
 export type RequestWithQuery<T> = Request<{}, {}, {}, T>
 export type RequestWithParams<T> = Request<T>
+export type RequestWithParamsAndQuery<T, D> = Request<T, {}, {}, D>
 export type RequestWithParamsAndBody<T, D> = Request<T, {}, D>
 
 export type Nullable<T> = T | null

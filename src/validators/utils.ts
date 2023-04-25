@@ -1,4 +1,5 @@
 import {body} from 'express-validator';
+import {blogsQueryRepository} from '../repositories/blogs-query-repository';
 
 export const createFieldChain = (field: string, maxLength?: number) => {
     const chain = body(field)
@@ -10,4 +11,12 @@ export const createFieldChain = (field: string, maxLength?: number) => {
     }
 
     return chain
+}
+
+export const blogIdCustomValidation = async (blogId: string) => {
+    const blog = await blogsQueryRepository.findBlogById(blogId)
+
+    if (!blog) {
+        throw new Error(`Value 'id' should be an id of existing blog`);
+    }
 }
