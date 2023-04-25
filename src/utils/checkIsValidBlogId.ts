@@ -10,5 +10,5 @@ export const checkIsValidBlogId = async (blogId: string, res: Response): Promise
         return foundBlog
     }
 
-    res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+    res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
 }

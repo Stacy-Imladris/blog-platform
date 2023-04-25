@@ -88,7 +88,7 @@ export const getBlogsRouter = () => {
         res.status(HTTP_STATUSES.BAD_REQUEST_400)
     })
 
-    router.post('/:id/posts', basicAuthMiddleware, blogIdValidator, postTitleValidator, postShortDescriptionValidator, postContentValidator, inputValidationMiddleware, async (req: RequestWithParamsAndBody<URIParamsPostIdModel, Omit<CreatePostModel, 'blogId'>>, res: Response<PostViewModel>) => {
+    router.post('/:id/posts', basicAuthMiddleware, postTitleValidator, postShortDescriptionValidator, postContentValidator, inputValidationMiddleware, async (req: RequestWithParamsAndBody<URIParamsPostIdModel, Omit<CreatePostModel, 'blogId'>>, res: Response<PostViewModel>) => {
         const {title, shortDescription, content} = req.body
 
         const blogId = req.params.id
