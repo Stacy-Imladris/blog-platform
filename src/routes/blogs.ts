@@ -40,7 +40,6 @@ import {
 import {PostViewModel} from '../models/posts/PostViewModel';
 import {QueryPostsModel} from '../models/posts/QueryPostsModel';
 import {getBlogQueryParams, getPostQueryParams} from '../utils/getQueryParams';
-import {checkIsValidBlogId} from '../utils/checkIsValidBlogId';
 
 export const getBlogsRouter = () => {
     const router = express.Router()
@@ -93,9 +92,14 @@ export const getBlogsRouter = () => {
 
         const blogId = req.params.id
 
-        const foundBlog = await checkIsValidBlogId(req.params.id, res)
+        const foundBlog = await blogsQueryRepository.findBlogById(blogId)
 
-        const newPostId = await postsService.createPost(title, shortDescription, content, blogId, foundBlog!.name)
+        if (!foundBlog) {
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return
+        }
+
+        const newPostId = await postsService.createPost(title, shortDescription, content, blogId, foundBlog.name)
 
         const createdPost = await postsQueryRepository.findPostByMongoId(newPostId)
 

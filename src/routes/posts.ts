@@ -25,7 +25,7 @@ import {
 } from '../repositories/posts-query-repository';
 import {QueryPostsModel} from '../models/posts/QueryPostsModel';
 import {getPostQueryParams} from '../utils/getQueryParams';
-import {checkIsValidBlogId} from '../utils/checkIsValidBlogId';
+import {blogsQueryRepository} from '../repositories/blogs-query-repository';
 
 export const getPostsRouter = () => {
     const router = express.Router()
@@ -53,7 +53,12 @@ export const getPostsRouter = () => {
     router.post('/', basicAuthMiddleware, postTitleValidator, postShortDescriptionValidator, postContentValidator, postBlogIdValidator, inputValidationMiddleware, async (req: RequestWithBody<CreatePostModel>, res: Response<PostViewModel>) => {
         const {title, shortDescription, content, blogId} = req.body
 
-        const foundBlog = await checkIsValidBlogId(blogId, res)
+        const foundBlog = await blogsQueryRepository.findBlogById(blogId)
+
+        if (!foundBlog) {
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return
+        }
 
         const newPostId = await postsService.createPost(title, shortDescription, content, blogId, foundBlog!.name)
 
