@@ -1,3 +1,3 @@
-import {createFieldChain} from './utils';
+import {createFieldValidationChain} from './utils';
 
-export const titleValidator = createFieldChain('title', 40)
+export const titleValidator = createFieldValidationChain('title', {max: 40})

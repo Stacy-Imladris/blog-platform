@@ -1,10 +1,11 @@
-import {blogsCollection, exclusionMongoId, postsCollection} from '../db/db';
+import {exclusionMongoId, postsCollection} from '../db/db';
 import {Filter, ObjectId} from 'mongodb';
 import {PostViewModel} from '../models/posts/PostViewModel';
 import {QueryPostsModel} from '../models/posts/QueryPostsModel';
+import {QueryResultType} from '../types';
 
 export const postsQueryRepository = {
-    async findPosts(params: Required<QueryPostsModel>, blogId?: string): Promise<PostsQueryResultType> {
+    async findPosts(params: Required<QueryPostsModel>, blogId?: string): Promise<QueryResultType<PostViewModel>> {
         const {sortBy, sortDirection, pageNumber, pageSize} = params
 
         const filter: Filter<PostViewModel> = {}
@@ -38,13 +39,4 @@ export const postsQueryRepository = {
     async findPostByMongoId(_id: ObjectId): Promise<PostViewModel | null> {
         return await postsCollection.findOne({_id}, exclusionMongoId)
     }
-}
-
-//types
-export type PostsQueryResultType = {
-    pagesCount: number
-    page: number
-    pageSize: number
-    totalCount: number
-    items: PostViewModel[]
 }

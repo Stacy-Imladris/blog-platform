@@ -1,10 +1,8 @@
-import {PostViewModel} from '../models/posts/PostViewModel';
-import {BlogViewModel} from '../models/blogs/BlogViewModel';
 import {QueryBlogsModel} from '../models/blogs/QueryBlogsModel';
 import {QueryPostsModel} from '../models/posts/QueryPostsModel';
-import {Nullable} from '../types';
+import {QueryUsersModel} from '../models/users/QueryUsersModel';
 
-export const getPostQueryParams = (params: PostQueryParams): Required<QueryPostsModel> => {
+export const getPostsQueryParams = (params: QueryPostsModel): Required<QueryPostsModel> => {
     const {sortBy, sortDirection, pageNumber, pageSize} = params
 
     return {
@@ -15,7 +13,7 @@ export const getPostQueryParams = (params: PostQueryParams): Required<QueryPosts
     }
 }
 
-export const getBlogQueryParams = (params: BlogQueryParams): Required<QueryBlogsModel> => {
+export const getBlogsQueryParams = (params: QueryBlogsModel): Required<QueryBlogsModel> => {
     const {searchNameTerm, sortBy, sortDirection, pageNumber, pageSize} = params
 
     return {
@@ -27,18 +25,15 @@ export const getBlogQueryParams = (params: BlogQueryParams): Required<QueryBlogs
     }
 }
 
-//types
-type PostQueryParams = {
-    sortBy?: keyof PostViewModel
-    sortDirection?: 'asc' | 'desc'
-    pageNumber?: number
-    pageSize?: number
-}
+export const getUsersQueryParams = (params: QueryUsersModel): Required<QueryUsersModel> => {
+    const {searchLoginTerm, searchEmailTerm, sortBy, sortDirection, pageNumber, pageSize} = params
 
-type BlogQueryParams = {
-    searchNameTerm?: Nullable<string>
-    sortBy?: keyof BlogViewModel
-    sortDirection?: 'asc' | 'desc'
-    pageNumber?: number
-    pageSize?: number
+    return {
+        searchLoginTerm: searchLoginTerm || '',
+        searchEmailTerm: searchEmailTerm || '',
+        sortBy: sortBy || 'createdAt',
+        sortDirection: sortDirection && ['desc', 'asc'].includes(sortDirection) ? sortDirection : 'desc',
+        pageNumber: pageNumber && !isNaN(+pageNumber) ? +pageNumber : 1,
+        pageSize: pageSize && !isNaN(+pageSize) ? +pageSize : 10,
+    }
 }

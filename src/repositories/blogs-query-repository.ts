@@ -2,9 +2,10 @@ import {BlogViewModel} from '../models/blogs/BlogViewModel';
 import {blogsCollection, exclusionMongoId} from '../db/db';
 import {Filter, ObjectId} from 'mongodb';
 import {QueryBlogsModel} from '../models/blogs/QueryBlogsModel';
+import {QueryResultType} from '../types';
 
 export const blogsQueryRepository = {
-    async findBlogs(params: Required<QueryBlogsModel>): Promise<BlogsQueryResultType> {
+    async findBlogs(params: Required<QueryBlogsModel>): Promise<QueryResultType<BlogViewModel>> {
         const {searchNameTerm, sortBy, sortDirection, pageNumber, pageSize} = params
 
         const filter: Filter<BlogViewModel> = {}
@@ -38,13 +39,4 @@ export const blogsQueryRepository = {
     async findBlogByMongoId(_id: ObjectId): Promise<BlogViewModel | null> {
         return await blogsCollection.findOne({_id}, exclusionMongoId)
     }
-}
-
-//types
-export type BlogsQueryResultType = {
-    pagesCount: number
-    page: number
-    pageSize: number
-    totalCount: number
-    items: BlogViewModel[]
 }

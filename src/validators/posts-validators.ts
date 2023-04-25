@@ -1,14 +1,10 @@
-import {blogIdCustomValidation, createFieldChain} from './utils';
-import {param} from 'express-validator';
+import {blogIdCustomValidation, createFieldValidationChain} from './utils';
 
-export const postTitleValidator = createFieldChain('title', 30)
+export const postTitleValidator = createFieldValidationChain('title', {max: 30})
 
-export const postShortDescriptionValidator = createFieldChain('shortDescription', 100)
+export const postShortDescriptionValidator = createFieldValidationChain('shortDescription', {max: 100})
 
-export const postContentValidator = createFieldChain('content', 1000)
+export const postContentValidator = createFieldValidationChain('content', {max: 1000})
 
-export const postBlogIdValidator = createFieldChain('blogId')
-    .custom(blogIdCustomValidation)
-
-export const blogIdValidator = param('id')
+export const postBlogIdValidator = createFieldValidationChain('blogId')
     .custom(blogIdCustomValidation)

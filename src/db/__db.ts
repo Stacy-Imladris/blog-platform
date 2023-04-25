@@ -1,8 +1,5 @@
 import {AvailableResolutionsEnum, Nullable} from '../types';
 
-export const header = 'authorization'
-export const token = 'Basic YWRtaW46cXdlcnR5'
-
 export const __db: DBType = {
     blogs: [
         {

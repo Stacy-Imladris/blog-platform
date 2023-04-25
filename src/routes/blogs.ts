@@ -1,4 +1,5 @@
 import {
+    QueryResultType,
     RequestWithBody,
     RequestWithParams,
     RequestWithParamsAndBody,
@@ -20,12 +21,8 @@ import {
     blogWebsiteUrlValidator
 } from '../validators/blogs-validators';
 import {blogsService} from '../domain/blogs-service';
+import {blogsQueryRepository} from '../repositories/blogs-query-repository';
 import {
-    blogsQueryRepository,
-    BlogsQueryResultType
-} from '../repositories/blogs-query-repository';
-import {
-    blogIdValidator,
     postContentValidator,
     postShortDescriptionValidator,
     postTitleValidator
@@ -33,19 +30,16 @@ import {
 import {postsService} from '../domain/posts-service';
 import {CreatePostModel} from '../models/posts/CreatePostModel';
 import {URIParamsPostIdModel} from '../models/posts/URIParamsPostIdModel';
-import {
-    postsQueryRepository,
-    PostsQueryResultType
-} from '../repositories/posts-query-repository';
+import {postsQueryRepository} from '../repositories/posts-query-repository';
 import {PostViewModel} from '../models/posts/PostViewModel';
 import {QueryPostsModel} from '../models/posts/QueryPostsModel';
-import {getBlogQueryParams, getPostQueryParams} from '../utils/getQueryParams';
+import {getBlogsQueryParams, getPostsQueryParams} from '../utils/getQueryParams';
 
 export const getBlogsRouter = () => {
     const router = express.Router()
 
-    router.get('/', async (req: RequestWithQuery<QueryBlogsModel>, res: Response<BlogsQueryResultType>) => {
-        const params = getBlogQueryParams(req.query)
+    router.get('/', async (req: RequestWithQuery<QueryBlogsModel>, res: Response<QueryResultType<BlogViewModel>>) => {
+        const params = getBlogsQueryParams(req.query)
 
         const blogsQueryResult = await blogsQueryRepository.findBlogs(params)
 
@@ -65,8 +59,8 @@ export const getBlogsRouter = () => {
     })
 
     router.get('/:id/posts', async (req: RequestWithParamsAndQuery<URIParamsBlogIdModel, QueryPostsModel>,
-                              res: Response<PostsQueryResultType>) => {
-        const params = getPostQueryParams(req.query)
+                              res: Response<QueryResultType<PostViewModel>>) => {
+        const params = getPostsQueryParams(req.query)
 
         const foundBlog = await blogsQueryRepository.findBlogById(req.params.id)
 

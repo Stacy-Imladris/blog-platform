@@ -1,4 +1,5 @@
 import {
+    QueryResultType,
     RequestWithBody,
     RequestWithParams,
     RequestWithParamsAndBody,
@@ -19,19 +20,16 @@ import {
     postTitleValidator
 } from '../validators/posts-validators';
 import {postsService} from '../domain/posts-service';
-import {
-    postsQueryRepository,
-    PostsQueryResultType
-} from '../repositories/posts-query-repository';
+import {postsQueryRepository} from '../repositories/posts-query-repository';
 import {QueryPostsModel} from '../models/posts/QueryPostsModel';
-import {getPostQueryParams} from '../utils/getQueryParams';
+import {getPostsQueryParams} from '../utils/getQueryParams';
 import {blogsQueryRepository} from '../repositories/blogs-query-repository';
 
 export const getPostsRouter = () => {
     const router = express.Router()
 
-    router.get('/', async (req: RequestWithQuery<QueryPostsModel>, res: Response<PostsQueryResultType>) => {
-        const params = getPostQueryParams(req.query)
+    router.get('/', async (req: RequestWithQuery<QueryPostsModel>, res: Response<QueryResultType<PostViewModel>>) => {
+        const params = getPostsQueryParams(req.query)
 
         const postsQueryResult = await postsQueryRepository.findPosts(params)
 

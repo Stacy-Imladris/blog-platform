@@ -1,7 +1,7 @@
 import {ObjectId} from 'mongodb';
 
 export type PostModel = {
-    _id: ObjectId
+    _id?: ObjectId
     id: string
     title: string
     shortDescription: string
