@@ -19,6 +19,7 @@ export const getAuthRouter = () => {
 
         if (isUserLoggedIn) {
             res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+            return
         }
 
         res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
