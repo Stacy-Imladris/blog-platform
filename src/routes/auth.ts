@@ -1,4 +1,4 @@
-import express, {Response} from 'express';
+import express, {Request, Response} from 'express';
 import {RequestWithBody} from '../types';
 import {CreateAuthModel} from '../models/auth/CreateAuthModel';
 import {
@@ -8,22 +8,44 @@ import {
 import {inputValidationMiddleware} from '../middlewares/input-validation-middleware';
 import {authService} from '../domain/auth-service';
 import {HTTP_STATUSES} from '../utils';
+import {jwtService} from '../application/jwt-service';
+import {authMiddleware} from '../middlewares/auth-middleware';
+import {AuthMeModel} from '../models/auth/AuthMeModel';
+import {UserViewModel} from '../models/users/UserViewModel';
 
 export const getAuthRouter = () => {
     const router = express.Router()
 
-    router.post('/login', authLoginOrEmailValidator, authPasswordValidator, inputValidationMiddleware, async (req: RequestWithBody<CreateAuthModel>, res: Response<void>) => {
+    router.post('/login', authLoginOrEmailValidator, authPasswordValidator, inputValidationMiddleware, async (req: RequestWithBody<CreateAuthModel>, res: Response<ResponseWithToken>) => {
         const {loginOrEmail, password} = req.body
 
-        const isUserLoggedIn = await authService.checkCredentials(loginOrEmail, password)
+        const user = await authService.checkCredentials(loginOrEmail, password)
 
-        if (isUserLoggedIn) {
-            res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
-            return
+        if (user) {
+            const accessToken = await jwtService.createJWT(user)
+
+            res.status(HTTP_STATUSES.CREATED_201).json({accessToken})
+        } else {
+            res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+        }
+    })
+
+    router.get('/me', authMiddleware, async (req: Request, res: Response<AuthMeModel>) => {
+        const {id, login, email} = req.user as UserViewModel
+
+        const authMeData: AuthMeModel = {
+            userId: id,
+            login,
+            email
         }
 
-        res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+        res.json(authMeData)
     })
 
     return router
+}
+
+//types
+type ResponseWithToken = {
+    accessToken: string
 }

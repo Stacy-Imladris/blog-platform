@@ -1,6 +1,6 @@
 export type URIParamsUserIdModel = {
     /**
-     * id of existing post
+     * id of existing user
      */
     id: string
 }

@@ -41,6 +41,7 @@ export const getUsersRouter = () => {
 
         if (createdUser) {
             res.status(HTTP_STATUSES.CREATED_201).json(createdUser)
+            return
         }
 
         res.status(HTTP_STATUSES.BAD_REQUEST_400)

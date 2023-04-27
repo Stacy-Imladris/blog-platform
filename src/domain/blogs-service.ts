@@ -1,11 +1,11 @@
-import {BlogType} from '../db/__db';
 import {v1} from 'uuid';
 import {blogsRepository} from '../repositories/blogs-repository';
 import {ObjectId} from 'mongodb';
+import {BlogModel} from '../models/blogs/BlogModel';
 
 export const blogsService = {
     async createBlog(name: string, description: string, websiteUrl: string): Promise<ObjectId> {
-        const newBlog: BlogType = {
+        const newBlog: BlogModel = {
             id: v1(),
             name,
             description,

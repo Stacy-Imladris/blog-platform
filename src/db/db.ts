@@ -1,12 +1,11 @@
 import {MongoClient} from 'mongodb';
-import * as dotenv from 'dotenv'
 import {PostModel} from '../models/posts/PostModel';
 import {BlogModel} from '../models/blogs/BlogModel';
 import {UserModel} from '../models/users/UserModel';
+import {settings} from '../settings';
+import {CommentModel} from '../models/comments/CommentModel';
 
-dotenv.config()
-
-const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/blog-platform-local'
+const mongoUri = settings.MONGO_URI || 'mongodb://localhost:27017/blog-platform-local'
 
 const client = new MongoClient(mongoUri)
 
@@ -15,6 +14,8 @@ const db = client.db()
 export const usersCollection = db.collection<UserModel>('users');
 
 export const blogsCollection = db.collection<BlogModel>('blogs');
+
+export const commentsCollection = db.collection<CommentModel>('comments');
 
 export const postsCollection = db.collection<PostModel>('posts');
 
@@ -40,5 +41,12 @@ export const userProjection = {
         _id: 0,
         passwordHash: 0,
         passwordSalt: 0
+    }
+}
+
+export const commentsProjection = {
+    projection: {
+        _id: 0,
+        postId: 0
     }
 }

@@ -2,7 +2,7 @@ import {
     QueryResultType,
     RequestWithBody,
     RequestWithParams,
-    RequestWithParamsAndBody,
+    RequestWithParamsAndBody, RequestWithParamsAndQuery,
     RequestWithQuery,
 } from '../types';
 import express, {Response} from 'express';
@@ -22,8 +22,15 @@ import {
 import {postsService} from '../domain/posts-service';
 import {postsQueryRepository} from '../repositories/posts-query-repository';
 import {QueryPostsModel} from '../models/posts/QueryPostsModel';
-import {getPostsQueryParams} from '../utils/getQueryParams';
+import {getCommentsQueryParams, getPostsQueryParams} from '../utils/getQueryParams';
 import {blogsQueryRepository} from '../repositories/blogs-query-repository';
+import {QueryCommentsModel} from '../models/comments/QueryCommentsModel';
+import {commentsQueryRepository} from '../repositories/comments-query-repository';
+import {CommentViewModel} from '../models/comments/CommentViewModel';
+import {authMiddleware} from '../middlewares/auth-middleware';
+import {commentContentValidator} from '../validators/comments-validators';
+import {CreateCommentModel} from '../models/comments/CreateCommentModel';
+import {commentsService} from '../domain/comments-service';
 
 export const getPostsRouter = () => {
     const router = express.Router()
@@ -48,6 +55,22 @@ export const getPostsRouter = () => {
         res.json(foundPost)
     })
 
+    router.get('/:id/comments', async (req: RequestWithParamsAndQuery<URIParamsPostIdModel, QueryCommentsModel>,
+                              res: Response<QueryResultType<CommentViewModel>>) => {
+        const params = getCommentsQueryParams(req.query)
+
+        const foundPost = await postsQueryRepository.findPostById(req.params.id)
+
+        if (!foundPost) {
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return
+        }
+
+        const commentsQueryResult = await commentsQueryRepository.findComments(params, req.params.id)
+
+        res.json(commentsQueryResult)
+    })
+
     router.post('/', basicAuthMiddleware, postTitleValidator, postShortDescriptionValidator, postContentValidator, postBlogIdValidator, inputValidationMiddleware, async (req: RequestWithBody<CreatePostModel>, res: Response<PostViewModel>) => {
         const {title, shortDescription, content, blogId} = req.body
 
@@ -64,6 +87,29 @@ export const getPostsRouter = () => {
 
         if (createdPost) {
             res.status(HTTP_STATUSES.CREATED_201).json(createdPost)
+            return
+        }
+
+        res.status(HTTP_STATUSES.BAD_REQUEST_400)
+    })
+
+    router.post('/:id/comments', authMiddleware, commentContentValidator, inputValidationMiddleware, async (req: RequestWithParamsAndBody<URIParamsPostIdModel, CreateCommentModel>, res: Response<CommentViewModel>) => {
+        const postId = req.params.id
+
+        const foundPost = await postsQueryRepository.findPostById(postId)
+
+        if (!foundPost) {
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return
+        }
+
+        const newCommentId = await commentsService.createComment(req.body.content, postId, req.user!.id, req.user!.login)
+
+        const createdComment = await commentsQueryRepository.findCommentByMongoId(newCommentId)
+
+        if (createdComment) {
+            res.status(HTTP_STATUSES.CREATED_201).json(createdComment)
+            return
         }
 
         res.status(HTTP_STATUSES.BAD_REQUEST_400)

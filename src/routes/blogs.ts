@@ -83,6 +83,7 @@ export const getBlogsRouter = () => {
 
         if (createdBlog) {
             res.status(HTTP_STATUSES.CREATED_201).json(createdBlog)
+            return
         }
 
         res.status(HTTP_STATUSES.BAD_REQUEST_400)
@@ -106,6 +107,7 @@ export const getBlogsRouter = () => {
 
         if (createdPost) {
             res.status(HTTP_STATUSES.CREATED_201).json(createdPost)
+            return
         }
 
         res.status(HTTP_STATUSES.BAD_REQUEST_400)
