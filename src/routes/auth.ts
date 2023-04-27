@@ -24,7 +24,7 @@ export const getAuthRouter = () => {
         if (user) {
             const accessToken = await jwtService.createJWT(user)
 
-            res.status(HTTP_STATUSES.CREATED_201).json({accessToken})
+            res.json({accessToken})
         } else {
             res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
         }
