@@ -30,8 +30,8 @@ export const getUsersQueryParams = (params: QueryUsersModel): Required<QueryUser
     const {searchLoginTerm, searchEmailTerm, sortBy, sortDirection, pageNumber, pageSize} = params
 
     return {
-        searchLoginTerm: searchLoginTerm || '',
-        searchEmailTerm: searchEmailTerm || '',
+        searchLoginTerm: searchLoginTerm || null,
+        searchEmailTerm: searchEmailTerm || null,
         sortBy: sortBy || 'createdAt',
         sortDirection: sortDirection && ['desc', 'asc'].includes(sortDirection) ? sortDirection : 'desc',
         pageNumber: pageNumber && !isNaN(+pageNumber) ? +pageNumber : 1,

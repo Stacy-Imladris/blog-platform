@@ -21,7 +21,7 @@ export const postsQueryRepository = {
 
         const totalCount = await postsCollection.countDocuments(filter)
 
-        const pagesCount = Math.ceil(totalCount / pageSize)
+        const pagesCount = !totalCount ? 0 : Math.ceil(totalCount / pageSize)
 
         return {
             pagesCount,

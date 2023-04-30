@@ -63,12 +63,12 @@ describe('/videos', () => {
             availableResolutions: ['P240']
         }
 
-        const createResponse = await getRequest()
+        const createdResponse = await getRequest()
             .post('/videos')
             .send(data)
             .expect(HTTP_STATUSES.CREATED_201)
 
-        createdVideo1 = createResponse.body
+        createdVideo1 = createdResponse.body
 
         expect(createdVideo1).toEqual({
             id: expect.any(Number),
@@ -94,12 +94,12 @@ describe('/videos', () => {
             availableResolutions: ['P1080']
         }
 
-        const createResponse = await getRequest()
+        const createdResponse = await getRequest()
             .post('/videos')
             .send(data)
             .expect(HTTP_STATUSES.CREATED_201)
 
-        createdVideo2 = createResponse.body
+        createdVideo2 = createdResponse.body
 
         expect(createdVideo2).toEqual({
             id: expect.any(Number),
@@ -171,7 +171,7 @@ describe('/videos', () => {
             .expect(HTTP_STATUSES.OK_200, createdVideo1)
     })
 
-    it('shouldn\'t update video that not exist', async () => {
+    it('shouldn\'t update video that don\'t exists', async () => {
         const data: UpdateVideoModel = {
             title: 'New video title',
             author: 'Dima',

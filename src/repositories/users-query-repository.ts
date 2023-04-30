@@ -16,11 +16,12 @@ export const usersQueryRepository = {
             pageSize
         } = params
 
-        const filter: Filter<UserViewModel> = {
-            $or: [
-                {login: {$regex: searchLoginTerm, $options: 'i'}},
-                {email: {$regex: searchEmailTerm, $options: 'i'}}
-            ]
+        const filter: Filter<UserViewModel> = searchLoginTerm || searchEmailTerm ? {$or: []} : {}
+        if (searchLoginTerm) {
+            filter.$or?.push({login: {$regex: searchLoginTerm, $options: 'i'}})
+        }
+        if (searchEmailTerm) {
+            filter.$or?.push({email: {$regex: searchEmailTerm, $options: 'i'}})
         }
 
         const skippedCount = (pageNumber - 1) * pageSize
@@ -30,7 +31,7 @@ export const usersQueryRepository = {
 
         const totalCount = await usersCollection.countDocuments(filter)
 
-        const pagesCount = Math.ceil(totalCount / pageSize)
+        const pagesCount = !totalCount ? 0 : Math.ceil(totalCount / pageSize)
 
         return {
             pagesCount,

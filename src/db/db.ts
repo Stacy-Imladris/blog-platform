@@ -22,8 +22,6 @@ export const postsCollection = db.collection<PostModel>('posts');
 export async function runDB() {
     try {
         await client.connect()
-        await client.db('blogs').command({ping: 1})
-
         console.log('Connected successfully to mongo server')
     } catch {
         console.log('Connection to mongo server failed')
@@ -31,8 +29,18 @@ export async function runDB() {
     }
 }
 
+export async function stopDB() {
+    try {
+        await client.close()
+        console.log('Connection to mongo server has been successfully closed')
+    } catch(err) {
+        console.log(err)
+    }
+}
+
 export const header = 'authorization'
-export const token = 'Basic YWRtaW46cXdlcnR5'
+export const getBasicAuthString = (token: string) => `Basic ${token}`
+export const getJwtAuthString = (token: string) => `Bearer ${token}`
 
 export const exclusionMongoId = {projection: {_id: 0}}
 

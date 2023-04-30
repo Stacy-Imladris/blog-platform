@@ -21,7 +21,7 @@ export const blogsQueryRepository = {
 
         const totalCount = await blogsCollection.countDocuments(filter)
 
-        const pagesCount = Math.ceil(totalCount / pageSize)
+        const pagesCount = !totalCount ? 0 : Math.ceil(totalCount / pageSize)
 
         return {
             pagesCount,

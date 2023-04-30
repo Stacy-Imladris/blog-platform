@@ -4,8 +4,8 @@ import {MinMaxOptions} from 'express-validator/src/options';
 
 export const createFieldValidationChain = (field: string, lengthOptions?: MinMaxOptions) => {
     const chain = body(field)
-        .isString().withMessage(`Value ${field} should be type string`)
-        .trim().notEmpty().withMessage(`Value ${field} is required and shouldn\'t be empty`)
+        .isString().withMessage(`Value '${field}' should be type string`)
+        .trim().notEmpty().withMessage(`Value '${field}' is required and shouldn\'t be empty`)
 
     if (lengthOptions) {
         const {min, max} = lengthOptions
@@ -20,7 +20,7 @@ export const createFieldValidationChain = (field: string, lengthOptions?: MinMax
         }
 
         if (min || max) {
-            return chain.isLength(lengthOptions).withMessage(`Value ${field} should be with ${minLengthMessage}${min && max ? ' and ' : ''}${maxLengthMessage}`)
+            return chain.isLength(lengthOptions).withMessage(`Value '${field}' should be with ${minLengthMessage}${min && max ? ' and ' : ''}${maxLengthMessage}`)
         }
     }
 

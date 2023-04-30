@@ -61,5 +61,5 @@ export const videosRepository = {
         } else {
             return false
         }
-    },
+    }
 }

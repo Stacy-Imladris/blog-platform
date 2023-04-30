@@ -4,6 +4,7 @@ import {
     postsCollection,
     usersCollection
 } from '../db/db';
+import {__db} from '../db/__db';
 
 export const testsRepository = {
     async deleteAllData(): Promise<void> {
@@ -11,5 +12,9 @@ export const testsRepository = {
         await commentsCollection.deleteMany({})
         await postsCollection.deleteMany({})
         await usersCollection.deleteMany({})
+        /**
+         * Obsolete: clean memory db for videos (for passing tests)
+         */
+        __db.videos = []
     }
 }
