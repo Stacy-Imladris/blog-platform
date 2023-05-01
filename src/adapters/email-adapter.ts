@@ -11,13 +11,11 @@ export const emailAdapter = {
             },
         });
 
-        let info = await transporter.sendMail({
+        await transporter.sendMail({
             from: 'Blog-platform <ada.davis27@gmail.com>',
             to: email,
             subject,
             html: message,
         })
-
-        console.log(info)
     }
 }

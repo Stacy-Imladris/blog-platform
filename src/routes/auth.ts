@@ -57,7 +57,7 @@ export const getAuthRouter = () => {
         async (req: RequestWithBody<CreateUserModel>, res: Response) => {
             const {login, password, email} = req.body
 
-            const newUserId = await usersService.createUser(login, password, email)
+            const newUserId = await usersService.createUser(login, password, email, true)
 
             const createdUser = await usersQueryRepository.findUserByMongoIdWithoutProjection(newUserId)
 
