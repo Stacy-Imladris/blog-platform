@@ -60,11 +60,13 @@ export const getAuthRouter = () => {
             const isExists = await usersQueryRepository.getIsUserExistsByLoginAndEmail(login, email)
 
             if (isExists) {
-                res.status(HTTP_STATUSES.BAD_REQUEST_400).json({errorsMessages: [{
-                            message: 'User with such email or login already exist',
-                            field: 'email'
-                        }]
-            })
+                res.status(HTTP_STATUSES.BAD_REQUEST_400).json({
+                    errorsMessages: [{
+                        message: 'User with such email or login already exist',
+                        field: 'email'
+                    }]
+                })
+            }
 
             const newUserId = await usersService.createUser(login, password, email, true)
 
