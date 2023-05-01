@@ -24,5 +24,10 @@ export const createErrorObject = (field: string) => ({
     message: `Invalid ${field} data`
 })
 
+export const createErrorForExistingLoginOrEmail = (field: 'login' | 'email') => ({
+    field,
+    message: `User with such '${field}' already exist`
+})
+
 export const isResolutionsInvalid = (resolutions: string[]) => resolutions
     .some(el => !availableResolutionsArray.includes(el))

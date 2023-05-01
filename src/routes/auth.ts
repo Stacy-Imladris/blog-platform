@@ -1,5 +1,5 @@
 import express, {Request, Response} from 'express';
-import {RequestWithBody} from '../types';
+import {APIErrorResultType, RequestWithBody} from '../types';
 import {CreateAuthModel} from '../models/auth/CreateAuthModel';
 import {
     authCodeValidator,
@@ -8,7 +8,7 @@ import {
 } from '../validators/auth-validators';
 import {inputValidationMiddleware} from '../middlewares/input-validation-middleware';
 import {authService} from '../domain/auth-service';
-import {HTTP_STATUSES} from '../utils';
+import {createErrorForExistingLoginOrEmail, HTTP_STATUSES} from '../utils';
 import {jwtService} from '../application/jwt-service';
 import {authMiddleware} from '../middlewares/auth-middleware';
 import {AuthMeModel} from '../models/auth/AuthMeModel';
@@ -57,15 +57,19 @@ export const getAuthRouter = () => {
         async (req: RequestWithBody<CreateUserModel>, res: Response) => {
             const {login, password, email} = req.body
 
-            const isExists = await usersQueryRepository.getIsUserExistsByLoginAndEmail(login, email)
+            const isLoginAndEmailExists = await usersQueryRepository.getIsUserExistsByLoginAndEmail(login, email)
 
-            if (isExists) {
-                res.status(HTTP_STATUSES.BAD_REQUEST_400).json({
-                    errorsMessages: [{
-                        message: 'User with such email or login already exist',
-                        field: 'email'
-                    }]
-                })
+            const errorObject: APIErrorResultType = {errorsMessages: []}
+
+            if (isLoginAndEmailExists.login) {
+                errorObject.errorsMessages.push(createErrorForExistingLoginOrEmail('login'))
+            }
+            if (isLoginAndEmailExists.email) {
+                errorObject.errorsMessages.push(createErrorForExistingLoginOrEmail('email'))
+            }
+
+            if (errorObject.errorsMessages.length) {
+                res.status(HTTP_STATUSES.BAD_REQUEST_400).json(errorObject)
                 return
             }
 

@@ -51,12 +51,13 @@ export const usersQueryRepository = {
         })
     },
 
-    async getIsUserExistsByLoginAndEmail(login: string, email: string): Promise<boolean> {
-        const user =  await usersCollection.findOne({
-            $or: [{login}, {email},]
-        })
+    async getIsUserExistsByLoginAndEmail(login: string, email: string): Promise<IsExistEmailOrLoginType> {
+        const user =  await usersCollection.findOne({$or: [{login}, {email}]})
 
-        return !!user
+        return {
+            email: user?.email === email,
+            login: user?.login === login
+        }
     },
 
     async findUserByConfirmationCode(code: string): Promise<UserModel | null> {
@@ -70,4 +71,9 @@ export const usersQueryRepository = {
     async findUserByMongoIdWithoutProjection(_id: ObjectId): Promise<UserModel | null> {
         return await usersCollection.findOne({_id})
     }
+}
+
+type IsExistEmailOrLoginType = {
+    login: boolean
+    email: boolean
 }
