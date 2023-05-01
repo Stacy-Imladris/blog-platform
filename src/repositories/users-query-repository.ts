@@ -51,6 +51,14 @@ export const usersQueryRepository = {
         })
     },
 
+    async getIsUserExistsByLoginAndEmail(login: string, email: string): Promise<boolean> {
+        const user =  await usersCollection.findOne({
+            $or: [{login}, {email},]
+        })
+
+        return !!user
+    },
+
     async findUserByConfirmationCode(code: string): Promise<UserModel | null> {
         return await usersCollection.findOne({'emailConfirmation.confirmationCode': code})
     },

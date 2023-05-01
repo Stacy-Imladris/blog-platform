@@ -57,6 +57,15 @@ export const getAuthRouter = () => {
         async (req: RequestWithBody<CreateUserModel>, res: Response) => {
             const {login, password, email} = req.body
 
+            const isExists = await usersQueryRepository.getIsUserExistsByLoginAndEmail(login, email)
+
+            if (isExists) {
+                res.status(HTTP_STATUSES.BAD_REQUEST_400).json({errorsMessages: [{
+                            message: 'User with such email or login already exist',
+                            field: 'email'
+                        }]
+            })
+
             const newUserId = await usersService.createUser(login, password, email, true)
 
             const createdUser = await usersQueryRepository.findUserByMongoIdWithoutProjection(newUserId)
