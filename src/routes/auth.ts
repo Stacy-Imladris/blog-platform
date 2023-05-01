@@ -66,6 +66,7 @@ export const getAuthRouter = () => {
                         field: 'email'
                     }]
                 })
+                return
             }
 
             const newUserId = await usersService.createUser(login, password, email, true)
