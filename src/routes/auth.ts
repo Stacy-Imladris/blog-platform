@@ -24,6 +24,7 @@ import {usersService} from '../domain/users-service';
 import {usersQueryRepository} from '../repositories/users-query-repository';
 import {emailManager} from '../managers/email-manager';
 import {EmailResendingModel} from '../models/auth/EmailResendingModel';
+import {usersRepository} from '../repositories/users-repository';
 
 export const getAuthRouter = () => {
     const router = express.Router()
@@ -95,18 +96,22 @@ export const getAuthRouter = () => {
         async (req: RequestWithBody<EmailResendingModel>, res: Response) => {
             const user = await usersQueryRepository.findUserByLoginOrEmail(req.body.email)
 
-            if (user) {
+            if (user && !user.emailConfirmation.isConfirmed) {
                 try {
-                    await emailManager.sendEmailConfirmationMessage(user)
-                    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+                    const isUpdated = await usersRepository.updateConfirmationCode(user._id!)
+
+                    if (isUpdated) {
+                        await emailManager.sendEmailConfirmationMessage(user)
+                        res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+                        return
+                    }
                 } catch (error) {
                     console.error(error)
                     // await usersService.deleteUser(createdUser.id)
-                    res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
                 }
-            } else {
-                res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
             }
+
+            res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
         })
 
     router.get('/me', authMiddleware, async (req: Request, res: Response<AuthMeModel>) => {
