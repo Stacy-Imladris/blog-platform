@@ -80,7 +80,7 @@ export const getAuthRouter = () => {
 
             if (createdUser) {
                 try {
-                    await emailManager.sendEmailConfirmationMessage(createdUser)
+                    await emailManager.sendEmailConfirmationMessage(createdUser.email, createdUser.emailConfirmation.confirmationCode)
                     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
                 } catch (error) {
                     console.error(error)
@@ -98,10 +98,10 @@ export const getAuthRouter = () => {
 
             if (user && !user.emailConfirmation.isConfirmed) {
                 try {
-                    const isUpdated = await usersRepository.updateConfirmationCode(user._id!)
+                    const newConfirmationCode = await usersRepository.updateConfirmationCode(user._id!)
 
-                    if (isUpdated) {
-                        await emailManager.sendEmailConfirmationMessage(user)
+                    if (newConfirmationCode) {
+                        await emailManager.sendEmailConfirmationMessage(user.email, newConfirmationCode)
                         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
                         return
                     }

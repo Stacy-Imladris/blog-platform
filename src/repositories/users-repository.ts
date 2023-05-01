@@ -2,6 +2,7 @@ import {ObjectId} from 'mongodb';
 import {UserModel} from '../models/users/UserModel';
 import {usersCollection} from '../db/db';
 import {v1} from 'uuid';
+import {Nullable} from '../types';
 
 export const usersRepository = {
     async createUser(user: UserModel): Promise<ObjectId> {
@@ -24,11 +25,13 @@ export const usersRepository = {
         return result.modifiedCount === 1
     },
 
-    async updateConfirmationCode(_id: ObjectId): Promise<boolean> {
+    async updateConfirmationCode(_id: ObjectId): Promise<Nullable<string>> {
+        const newConfirmationCode = v1()
+
         const result = await usersCollection.updateOne({_id}, {$set: {
-            'emailConfirmation.confirmationCode': v1()
+            'emailConfirmation.confirmationCode': newConfirmationCode
             }})
 
-        return result.modifiedCount === 1
+        return result.modifiedCount === 1 ? newConfirmationCode : null
     }
 }
