@@ -1,14 +1,11 @@
-import request from 'supertest';
-import {app} from '../src/app';
 import {HTTP_STATUSES} from '../src/utils';
-import {getJwtAuthString, header, runDB, stopDB, getBasicAuthString} from '../src/db/db';
+import {getBasicAuthString, getJwtAuthString, header, runDB, stopDB} from '../src/db/db';
 import {Nullable} from '../src/types';
 import {CreateUserModel} from '../src/models/users/CreateUserModel';
 import {UserViewModel} from '../src/models/users/UserViewModel';
 import {CreateAuthModel} from '../src/models/auth/CreateAuthModel';
 import {settings} from '../src/settings';
-
-const getRequest = () => request(app)
+import {getRequest} from '../src/app';
 
 describe('/auth', () => {
     let createdUser: Nullable<UserViewModel> = null

@@ -1,4 +1,5 @@
 import express from 'express'
+import request from 'supertest';
 import bodyParser from 'body-parser'
 import {getAuthRouter} from './routes/auth';
 import {getBlogsRouter} from './routes/blogs';
@@ -10,6 +11,7 @@ import {getCommentsRouter} from './routes/comments';
 
 export const app = express()
 
+app.set('trust proxy', true)
 app.use(bodyParser.json())
 
 app.use('/auth', getAuthRouter())
@@ -19,3 +21,5 @@ app.use('/posts', getPostsRouter())
 app.use('/users', getUsersRouter())
 app.use('/videos', getVideosRouter())
 app.use('/testing', getTestsRouter())
+
+export const getRequest = () => request(app)

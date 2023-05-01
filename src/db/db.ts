@@ -48,7 +48,8 @@ export const userProjection = {
     projection: {
         _id: 0,
         passwordHash: 0,
-        passwordSalt: 0
+        passwordSalt: 0,
+        emailConfirmation: 0
     }
 }
 

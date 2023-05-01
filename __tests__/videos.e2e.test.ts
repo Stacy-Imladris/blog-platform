@@ -1,10 +1,7 @@
-import request from 'supertest';
-import {app} from '../src/app';
 import {createErrorObject, HTTP_STATUSES} from '../src/utils';
 import {CreateVideoModel} from '../src/models/videos/CreateVideoModel';
 import {UpdateVideoModel} from '../src/models/videos/UpdateVideoModel';
-
-const getRequest = () => request(app)
+import {getRequest} from '../src/app';
 
 describe('/videos', () => {
     beforeAll(async () => {

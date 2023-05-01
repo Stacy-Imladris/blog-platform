@@ -1,16 +1,13 @@
-import request from 'supertest';
-import {app} from '../src/app';
 import {HTTP_STATUSES} from '../src/utils';
 import {CreateBlogModel} from '../src/models/blogs/CreateBlogModel';
-import {runDB, stopDB, header, getBasicAuthString} from '../src/db/db';
+import {getBasicAuthString, header, runDB, stopDB} from '../src/db/db';
 import {Nullable} from '../src/types';
 import {BlogViewModel} from '../src/models/blogs/BlogViewModel';
 import {UpdateBlogModel} from '../src/models/blogs/UpdateBlogModel';
 import {PostViewModel} from '../src/models/posts/PostViewModel';
 import {CreatePostModel} from '../src/models/posts/CreatePostModel';
 import {settings} from '../src/settings';
-
-const getRequest = () => request(app)
+import {getRequest} from '../src/app';
 
 describe('/blogs', () => {
     let createdBlog1: Nullable<BlogViewModel> = null

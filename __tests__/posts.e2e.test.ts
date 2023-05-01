@@ -1,9 +1,7 @@
-import request from 'supertest';
-import {app} from '../src/app';
 import {HTTP_STATUSES} from '../src/utils';
 import {CreatePostModel} from '../src/models/posts/CreatePostModel';
 import {UpdatePostModel} from '../src/models/posts/UpdatePostModel';
-import {runDB, stopDB, header, getBasicAuthString, getJwtAuthString} from '../src/db/db';
+import {getBasicAuthString, getJwtAuthString, header, runDB, stopDB} from '../src/db/db';
 import {CreateBlogModel} from '../src/models/blogs/CreateBlogModel';
 import {Nullable} from '../src/types';
 import {BlogViewModel} from '../src/models/blogs/BlogViewModel';
@@ -14,8 +12,7 @@ import {CreateUserModel} from '../src/models/users/CreateUserModel';
 import {CreateAuthModel} from '../src/models/auth/CreateAuthModel';
 import {CreateCommentModel} from '../src/models/comments/CreateCommentModel';
 import {CommentViewModel} from '../src/models/comments/CommentViewModel';
-
-const getRequest = () => request(app)
+import {getRequest} from '../src/app';
 
 describe('/posts', () => {
     let createdUser: Nullable<UserViewModel> = null
@@ -23,8 +20,7 @@ describe('/posts', () => {
     let createdBlog: Nullable<BlogViewModel> = null
     let createdPost1: Nullable<PostViewModel> = null
     let createdPost2: Nullable<PostViewModel> = null
-    let createdComment1: Nullable<CommentViewModel> = null
-    let createdComment2: Nullable<CommentViewModel> = null
+    let createdComment: Nullable<CommentViewModel> = null
 
     beforeAll(async () => {
         await runDB()
@@ -253,9 +249,9 @@ describe('/posts', () => {
             .send(data)
             .expect(HTTP_STATUSES.CREATED_201)
 
-        createdComment1 = res1.body
+        createdComment = res1.body
 
-        expect(createdComment1).toEqual({
+        expect(createdComment).toEqual({
             id: expect.any(String),
             content: data.content,
             commentatorInfo: {
@@ -268,7 +264,7 @@ describe('/posts', () => {
         const res2 = await getRequest()
             .get(`/posts/${createdPost1!.id}/comments`)
             .expect(HTTP_STATUSES.OK_200)
-        expect(res2.body.items).toEqual([createdComment1])
+        expect(res2.body.items).toEqual([createdComment])
     })
 
     it('POST /posts/:id/comments - should create one more comment', async () => {
@@ -282,9 +278,9 @@ describe('/posts', () => {
             .send(data)
             .expect(HTTP_STATUSES.CREATED_201)
 
-        const createdComment2 = res1.body
+        const secondComment = res1.body
 
-        expect(createdComment2).toEqual({
+        expect(secondComment).toEqual({
             id: expect.any(String),
             content: data.content,
             commentatorInfo: {
@@ -297,7 +293,7 @@ describe('/posts', () => {
         const res2 = await getRequest()
             .get(`/posts/${createdPost1!.id}/comments`)
             .expect(HTTP_STATUSES.OK_200)
-        expect(res2.body.items).toEqual([createdComment2, createdComment1])
+        expect(res2.body.items).toEqual([secondComment, createdComment])
     })
 
     it('GET /posts/:id/comments - should return 200 and comments for post for request with query params', async () => {

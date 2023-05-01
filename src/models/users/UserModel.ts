@@ -8,4 +8,16 @@ export type UserModel = {
     passwordHash: string
     passwordSalt: string
     createdAt: string
+    emailConfirmation: UserEmailConfirmationType
+}
+
+type UserEmailConfirmationType = {
+    confirmationCode: string
+    expirationDate: Date
+    isConfirmed: boolean
+    // sentEmails: SentEmailType[]
+}
+
+type SentEmailType = {
+    date: Date
 }

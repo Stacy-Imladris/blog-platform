@@ -1,5 +1,3 @@
-import request from 'supertest';
-import {app} from '../src/app';
 import {HTTP_STATUSES} from '../src/utils';
 import {CreatePostModel} from '../src/models/posts/CreatePostModel';
 import {getBasicAuthString, getJwtAuthString, header, runDB, stopDB} from '../src/db/db';
@@ -14,8 +12,7 @@ import {CreateUserModel} from '../src/models/users/CreateUserModel';
 import {CreateCommentModel} from '../src/models/comments/CreateCommentModel';
 import {CreateAuthModel} from '../src/models/auth/CreateAuthModel';
 import {UpdateCommentModel} from '../src/models/comments/UpdateCommentModel';
-
-const getRequest = () => request(app)
+import {getRequest} from '../src/app';
 
 describe('/comments', () => {
     let createdUser1: Nullable<UserViewModel> = null

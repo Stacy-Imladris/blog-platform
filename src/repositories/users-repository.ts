@@ -13,5 +13,13 @@ export const usersRepository = {
         const result = await usersCollection.deleteOne({id})
 
         return !!result.deletedCount
+    },
+
+    async updateConfirmation(_id: ObjectId): Promise<boolean> {
+        const result = await usersCollection.updateOne({_id}, {$set: {
+            'emailConfirmation.isConfirmed': true
+            }})
+
+        return result.modifiedCount === 1
     }
 }
