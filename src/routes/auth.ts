@@ -96,8 +96,8 @@ export const getAuthRouter = () => {
         async (req: RequestWithBody<EmailResendingModel>, res: Response) => {
             const user = await usersQueryRepository.findUserByLoginOrEmail(req.body.email)
 
-            if (user && !user.emailConfirmation.isConfirmed) {
-                try {
+            try {
+                if (user && !user.emailConfirmation.isConfirmed) {
                     const newConfirmationCode = await usersRepository.updateConfirmationCode(user._id!)
 
                     if (newConfirmationCode) {
@@ -105,10 +105,9 @@ export const getAuthRouter = () => {
                         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
                         return
                     }
-                } catch (error) {
-                    console.error(error)
-                    // await usersService.deleteUser(createdUser.id)
                 }
+            } catch (error) {
+                console.error(error)
             }
 
             res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
