@@ -2,18 +2,30 @@ import jwt from 'jsonwebtoken'
 import {settings} from '../settings';
 import {UserModel} from '../models/users/UserModel';
 import {Nullable} from '../types';
+import {UserViewModel} from '../models/users/UserViewModel';
 
 export const jwtService = {
-    async createJWT(user: UserModel): Promise<string> {
-        return jwt.sign({user}, settings.JWT_SECRET, {expiresIn: '1h'})
+    async createJWT(user: UserModel | UserViewModel): Promise<string> {
+        return jwt.sign({id: user.id}, settings.JWT_SECRET, {expiresIn: '10h'})
     },
 
-    async getUserIdByToken(token: string): Promise<Nullable<UserModel>> {
+    async createRefreshJWT(user: UserModel | UserViewModel, sessionId: string): Promise<string> {
+        return jwt.sign({id: user.id, sessionId}, settings.JWT_SECRET, {
+            expiresIn: '20h',
+        })
+    },
+
+    async verifyUserByToken(token: string): Promise<Nullable<VerifiedToken>> {
         try {
-            const result: any = jwt.verify(token, settings.JWT_SECRET)
-            return result.user
+            return jwt.verify(token, settings.JWT_SECRET) as VerifiedToken
         } catch (error) {
             return null
         }
     }
+}
+
+//types
+type VerifiedToken = {
+    id: string
+    sessionId?: string
 }

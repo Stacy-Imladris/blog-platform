@@ -1,7 +1,7 @@
 import {ObjectId} from 'mongodb';
 import {UserModel} from '../models/users/UserModel';
 import {usersCollection} from '../db/db';
-import {v1} from 'uuid';
+import {v4} from 'uuid';
 import {Nullable} from '../types';
 
 export const usersRepository = {
@@ -26,7 +26,7 @@ export const usersRepository = {
     },
 
     async updateConfirmationCode(_id: ObjectId): Promise<Nullable<string>> {
-        const newConfirmationCode = v1()
+        const newConfirmationCode = v4()
 
         const result = await usersCollection.updateOne({_id}, {$set: {
             'emailConfirmation.confirmationCode': newConfirmationCode

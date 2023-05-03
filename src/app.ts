@@ -1,4 +1,5 @@
 import express from 'express'
+import cookieParser from 'cookie-parser';
 import request from 'supertest';
 import bodyParser from 'body-parser'
 import {getAuthRouter} from './routes/auth';
@@ -13,6 +14,7 @@ export const app = express()
 
 app.set('trust proxy', true)
 app.use(bodyParser.json())
+app.use(cookieParser())
 
 app.use('/auth', getAuthRouter())
 app.use('/blogs', getBlogsRouter())

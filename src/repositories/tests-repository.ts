@@ -1,7 +1,7 @@
 import {
     blogsCollection,
     commentsCollection,
-    postsCollection,
+    postsCollection, sessionsCollection,
     usersCollection
 } from '../db/db';
 import {__db} from '../db/__db';
@@ -12,6 +12,7 @@ export const testsRepository = {
         await commentsCollection.deleteMany({})
         await postsCollection.deleteMany({})
         await usersCollection.deleteMany({})
+        await sessionsCollection.deleteMany({})
         /**
          * Obsolete: clean memory db for videos (for passing tests)
          */

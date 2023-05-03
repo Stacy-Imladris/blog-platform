@@ -64,6 +64,10 @@ export const usersQueryRepository = {
         return await usersCollection.findOne({'emailConfirmation.confirmationCode': code})
     },
 
+    async findUserById(id: string): Promise<UserViewModel | null> {
+        return await usersCollection.findOne({id}, userProjection)
+    },
+
     async findUserByMongoId(_id: ObjectId): Promise<UserViewModel | null> {
         return await usersCollection.findOne({_id}, userProjection)
     },

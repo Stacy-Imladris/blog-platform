@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import {v1} from 'uuid';
+import {v4} from 'uuid';
 import {usersRepository} from '../repositories/users-repository';
 import {ObjectId} from 'mongodb';
 import {generateHash} from '../utils/generateHash';
@@ -12,14 +12,14 @@ export const usersService = {
         const passwordHash = await generateHash(password, passwordSalt)
 
         const newUser: UserModel = {
-            id: v1(),
+            id: v4(),
             login,
             email,
             passwordHash,
             passwordSalt,
             createdAt: new Date().toISOString(),
             emailConfirmation: {
-                confirmationCode: v1(),
+                confirmationCode: v4(),
                 expirationDate: isRegistration ? add(new Date(), {
                     hours: 1,
                     minutes: 3

@@ -4,6 +4,7 @@ import {BlogModel} from '../models/blogs/BlogModel';
 import {UserModel} from '../models/users/UserModel';
 import {settings} from '../settings';
 import {CommentModel} from '../models/comments/CommentModel';
+import {SessionModel} from '../models/sessions/SessionModel';
 
 const mongoUri = settings.MONGO_URI || 'mongodb://localhost:27017/blog-platform-local'
 
@@ -12,6 +13,8 @@ const client = new MongoClient(mongoUri)
 const db = client.db()
 
 export const usersCollection = db.collection<UserModel>('users');
+
+export const sessionsCollection = db.collection<SessionModel>('sessions');
 
 export const blogsCollection = db.collection<BlogModel>('blogs');
 

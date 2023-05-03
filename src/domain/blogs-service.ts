@@ -1,4 +1,4 @@
-import {v1} from 'uuid';
+import {v4} from 'uuid';
 import {blogsRepository} from '../repositories/blogs-repository';
 import {ObjectId} from 'mongodb';
 import {BlogModel} from '../models/blogs/BlogModel';
@@ -6,7 +6,7 @@ import {BlogModel} from '../models/blogs/BlogModel';
 export const blogsService = {
     async createBlog(name: string, description: string, websiteUrl: string): Promise<ObjectId> {
         const newBlog: BlogModel = {
-            id: v1(),
+            id: v4(),
             name,
             description,
             websiteUrl,

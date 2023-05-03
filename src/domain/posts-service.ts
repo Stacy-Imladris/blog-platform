@@ -1,12 +1,12 @@
 import {postsRepository} from '../repositories/posts-repository';
-import {v1} from 'uuid';
+import {v4} from 'uuid';
 import {ObjectId} from 'mongodb';
 import {PostModel} from '../models/posts/PostModel';
 
 export const postsService = {
     async createPost(title: string, shortDescription: string, content: string, blogId: string, blogName: string): Promise<ObjectId> {
         const newPost: PostModel = {
-            id: v1(),
+            id: v4(),
             title,
             shortDescription,
             content,
