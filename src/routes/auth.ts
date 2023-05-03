@@ -58,7 +58,10 @@ export const getAuthRouter = () => {
             refreshToken
         })
 
-        res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: true
+        })
 
         res.json({accessToken})
     })
@@ -88,7 +91,10 @@ export const getAuthRouter = () => {
             refreshToken: newRefreshToken
         })
 
-        res.cookie('refreshToken', newRefreshToken, {httpOnly: true, secure: true})
+        res.cookie('refreshToken', newRefreshToken, {
+            httpOnly: true,
+            secure: true
+        })
 
         res.json({accessToken})
     })
@@ -151,7 +157,6 @@ export const getAuthRouter = () => {
                     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
                 } catch (error) {
                     console.error(error)
-                    // await usersService.deleteUser(createdUser.id)
                     res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
                 }
             } else {

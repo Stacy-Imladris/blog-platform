@@ -12,7 +12,7 @@ export const cookiesMiddleware = async (req: Request, res: Response, next: NextF
 
     const verifiedData = await jwtService.verifyUserByToken(refreshToken)
 
-    if (verifiedData) {
+    if (!verifiedData) {
         res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
         return
     }

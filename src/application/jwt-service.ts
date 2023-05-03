@@ -6,12 +6,12 @@ import {UserViewModel} from '../models/users/UserViewModel';
 
 export const jwtService = {
     async createJWT(user: UserModel | UserViewModel): Promise<string> {
-        return jwt.sign({id: user.id}, settings.JWT_SECRET, {expiresIn: '10h'})
+        return jwt.sign({id: user.id}, settings.JWT_SECRET, {expiresIn: '10s'})
     },
 
     async createRefreshJWT(user: UserModel | UserViewModel, sessionId: string): Promise<string> {
         return jwt.sign({id: user.id, sessionId}, settings.JWT_SECRET, {
-            expiresIn: '20h',
+            expiresIn: '20s',
         })
     },
 
