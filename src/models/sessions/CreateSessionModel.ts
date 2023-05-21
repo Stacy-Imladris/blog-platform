@@ -1,7 +1,9 @@
 export type CreateSessionModel = {
     userId: string
-    sessionId: string
-    userAgent: string
+    deviceId: string
+    deviceName: string
     ip: string
-    refreshToken: string
+    refreshTokenPayload: string
+    iat: number
+    exp: number
 }

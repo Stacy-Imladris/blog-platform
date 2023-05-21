@@ -91,7 +91,7 @@ describe('/auth', () => {
 
         const dataInToken = parseJwt(refreshToken1)
 
-        const session = await sessionsQueryRepository.findSessionById(dataInToken.sessionId)
+        const session = await sessionsQueryRepository.findSessionById(dataInToken.deviceId)
 
         accessToken1 = res.body.accessToken
 
@@ -324,9 +324,9 @@ describe('/auth', () => {
             .set('Cookie', [`refreshToken=${refreshToken2}`])
             .expect(HTTP_STATUSES.NO_CONTENT_204)
 
-        const {sessionId} = parseJwt(refreshToken2!)
+        const {deviceId} = parseJwt(refreshToken2!)
 
-        const session = await sessionsQueryRepository.findSessionById(sessionId)
+        const session = await sessionsQueryRepository.findSessionById(deviceId)
 
         expect(session).toBe(null)
     })

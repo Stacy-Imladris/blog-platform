@@ -6,18 +6,20 @@ import {UserViewModel} from '../models/users/UserViewModel';
 
 export const jwtService = {
     async createJWT(user: UserModel | UserViewModel): Promise<string> {
-        return jwt.sign({id: user.id}, settings.JWT_SECRET, {expiresIn: '10s'})
+        return jwt.sign({id: user.id}, settings.JWT_SECRET, {
+            expiresIn: '10s'
+        })
     },
 
-    async createRefreshJWT(user: UserModel | UserViewModel, sessionId: string): Promise<string> {
-        return jwt.sign({id: user.id, sessionId}, settings.JWT_SECRET, {
+    async createRefreshJWT(user: UserModel | UserViewModel, deviceId: string): Promise<string> {
+        return jwt.sign({id: user.id, deviceId}, settings.JWT_SECRET, {
             expiresIn: '20s',
         })
     },
 
-    async verifyUserByToken(token: string): Promise<Nullable<VerifiedToken>> {
+    async verifyUserByToken(token: string): Promise<Nullable<VerifiedTokenType>> {
         try {
-            return jwt.verify(token, settings.JWT_SECRET) as VerifiedToken
+            return jwt.verify(token, settings.JWT_SECRET) as VerifiedTokenType
         } catch (error) {
             return null
         }
@@ -25,7 +27,7 @@ export const jwtService = {
 }
 
 //types
-type VerifiedToken = {
+export type VerifiedTokenType = {
     id: string
-    sessionId?: string
+    deviceId: string
 }

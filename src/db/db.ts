@@ -5,6 +5,7 @@ import {UserModel} from '../models/users/UserModel';
 import {settings} from '../settings';
 import {CommentModel} from '../models/comments/CommentModel';
 import {SessionModel} from '../models/sessions/SessionModel';
+import {RateModel} from '../models/rate/RateModel';
 
 const mongoUri = settings.MONGO_URI || 'mongodb://localhost:27017/blog-platform-local'
 
@@ -15,6 +16,8 @@ const db = client.db()
 export const usersCollection = db.collection<UserModel>('users');
 
 export const sessionsCollection = db.collection<SessionModel>('sessions');
+
+export const rateLimitCollection = db.collection<RateModel>('rate');
 
 export const blogsCollection = db.collection<BlogModel>('blogs');
 
@@ -60,5 +63,13 @@ export const commentsProjection = {
     projection: {
         _id: 0,
         postId: 0
+    }
+}
+
+export const sessionsProjection = {
+    projection: {
+        _id: 0,
+        userId: 0,
+        refreshTokenPayload: 0,
     }
 }

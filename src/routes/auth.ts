@@ -29,15 +29,23 @@ import {UserViewModel} from '../models/users/UserViewModel';
 import {v4} from 'uuid';
 import {sessionsService} from '../domain/sessions-service';
 import {cookiesMiddleware} from '../middlewares/cookies-middleware';
+import {getFirstTwoPartsOfJwtToken} from '../utils/getFirstTwoPartsOfJwtToken';
+import {parseJwt} from '../utils/parseJwt';
+import {rateLimitMiddleware} from '../middlewares/rate-limit-middleware';
+
+const cookiesOptions = {
+    httpOnly: true,
+    secure: true,
+}
 
 export const getAuthRouter = () => {
     const router = express.Router()
 
-    router.post('/login', authLoginOrEmailValidator, authPasswordValidator, inputValidationMiddleware, async (req: RequestWithBody<CreateAuthModel>, res: Response<ResponseWithToken>) => {
+    router.post('/login', rateLimitMiddleware, authLoginOrEmailValidator, authPasswordValidator, inputValidationMiddleware, async (req: RequestWithBody<CreateAuthModel>, res: Response<ResponseWithToken>) => {
         const {loginOrEmail, password} = req.body
 
-        const userAgent: string = req.headers['user-agent'] ?? ''
-        const ip: string = req.ip ?? ''
+        const deviceName: string = req.headers['user-agent'] ?? 'unknown'
+        const ip: string = req.ip ?? '::1'
 
         const user = await authService.checkCredentials(loginOrEmail, password)
 
@@ -46,22 +54,24 @@ export const getAuthRouter = () => {
             return
         }
 
-        const sessionId = v4()
+        const deviceId = v4()
         const accessToken = await jwtService.createJWT(user)
-        const refreshToken = await jwtService.createRefreshJWT(user, sessionId)
+        const refreshToken = await jwtService.createRefreshJWT(user, deviceId)
+
+        const refreshTokenPayload = getFirstTwoPartsOfJwtToken(refreshToken)
+        const {iat, exp} = parseJwt(refreshToken)
 
         await sessionsService.createSession({
             userId: user.id,
-            sessionId,
-            userAgent,
+            deviceId,
+            deviceName,
             ip,
-            refreshToken
+            refreshTokenPayload,
+            iat,
+            exp,
         })
 
-        res.cookie('refreshToken', refreshToken, {
-            httpOnly: true,
-            secure: true
-        })
+        res.cookie('refreshToken', refreshToken, cookiesOptions)
 
         res.json({accessToken})
     })
@@ -69,8 +79,8 @@ export const getAuthRouter = () => {
     router.post('/refresh-token', cookiesMiddleware, async (req: Request, res: Response<ResponseWithToken>) => {
         const refreshToken = req.cookies.refreshToken
 
-        const userAgent: string = req.headers['user-agent'] ?? ''
-        const ip: string = req.ip ?? ''
+        const deviceName: string = req.headers['user-agent'] ?? 'unknown'
+        const ip: string = req.ip ?? '::1'
 
         const verifiedData = await jwtService.verifyUserByToken(refreshToken)
 
@@ -82,19 +92,21 @@ export const getAuthRouter = () => {
         }
 
         const accessToken = await jwtService.createJWT(user)
-        const newRefreshToken = await jwtService.createRefreshJWT(user, verifiedData.sessionId!)
+        const newRefreshToken = await jwtService.createRefreshJWT(user, verifiedData.deviceId)
 
-        await sessionsService.updateSession(verifiedData.sessionId!, {
+        const refreshTokenPayload = getFirstTwoPartsOfJwtToken(refreshToken)
+        const {iat, exp} = parseJwt(refreshToken)
+
+        await sessionsService.updateSession(verifiedData.deviceId, {
             userId: user.id,
-            userAgent,
+            deviceName,
             ip,
-            refreshToken: newRefreshToken
+            refreshTokenPayload,
+            iat,
+            exp,
         })
 
-        res.cookie('refreshToken', newRefreshToken, {
-            httpOnly: true,
-            secure: true
-        })
+        res.cookie('refreshToken', newRefreshToken, cookiesOptions)
 
         res.json({accessToken})
     })
@@ -111,12 +123,12 @@ export const getAuthRouter = () => {
             return
         }
 
-        await sessionsService.deleteSession(verifiedData.sessionId!)
+        await sessionsService.deleteSession(verifiedData.deviceId)
 
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
     })
 
-    router.post('/registration-confirmation', authCodeValidator, inputValidationMiddleware,
+    router.post('/registration-confirmation', rateLimitMiddleware, authCodeValidator, inputValidationMiddleware,
         async (req: RequestWithBody<RegistrationModel>, res: Response) => {
             const isConfirmed = await authService.confirmEmail(req.body.code)
 
@@ -127,7 +139,7 @@ export const getAuthRouter = () => {
             }
         })
 
-    router.post('/registration', userLoginValidator, userPasswordValidator, userEmailValidator, inputValidationMiddleware,
+    router.post('/registration', rateLimitMiddleware, userLoginValidator, userPasswordValidator, userEmailValidator, inputValidationMiddleware,
         async (req: RequestWithBody<CreateUserModel>, res: Response) => {
             const {login, password, email} = req.body
 
@@ -164,7 +176,7 @@ export const getAuthRouter = () => {
             }
         })
 
-    router.post('/registration-email-resending', userExistingEmailValidator, inputValidationMiddleware,
+    router.post('/registration-email-resending', rateLimitMiddleware, userExistingEmailValidator, inputValidationMiddleware,
         async (req: RequestWithBody<EmailResendingModel>, res: Response) => {
             const user = await usersQueryRepository.findUserByLoginOrEmail(req.body.email)
 

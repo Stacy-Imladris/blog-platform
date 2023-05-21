@@ -1,6 +1,8 @@
 export type UpdateSessionModel = {
     userId: string
-    userAgent: string
+    deviceName: string
     ip: string
-    refreshToken: string
+    refreshTokenPayload: string
+    iat: number
+    exp: number
 }

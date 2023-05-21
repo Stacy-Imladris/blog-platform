@@ -3,10 +3,10 @@ import {ObjectId} from 'mongodb';
 export type SessionModel = {
     _id?: ObjectId
     userId: string
-    sessionId: string
-    userAgent: string
+    deviceId: string
+    deviceName: string
     ip: string
-    refreshToken: string
-    createdAt: string
-    updatedAt: string
+    refreshTokenPayload: string
+    iat: number
+    exp: number
 }

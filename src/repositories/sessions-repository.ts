@@ -7,20 +7,20 @@ export const sessionsRepository = {
         await sessionsCollection.insertOne(sessionData)
     },
 
-    async updateSession(sessionId: string, data: UpdateSessionModel, updateAt: string): Promise<boolean> {
-        const result = await sessionsCollection.updateOne({sessionId}, {$set: {
-                userId: data.userId,
-                userAgent: data.userAgent,
-                ip: data.ip,
-                refreshToken: data.refreshToken,
-                updateAt
-            }})
+    async updateSession(deviceId: string, data: UpdateSessionModel): Promise<boolean> {
+        const result = await sessionsCollection.updateOne({deviceId}, {$set: data})
 
         return !!result.matchedCount
     },
 
-    async deleteSession(sessionId: string): Promise<boolean> {
-        const result = await sessionsCollection.deleteOne({sessionId})
+    async deleteSession(deviceId: string): Promise<boolean> {
+        const result = await sessionsCollection.deleteOne({deviceId})
+
+        return !!result.deletedCount
+    },
+
+    async deleteAllOtherSessions(userId: string, deviceId: string): Promise<boolean> {
+        const result = await sessionsCollection.deleteMany({userId, deviceId: {$ne: deviceId}})
 
         return !!result.deletedCount
     }

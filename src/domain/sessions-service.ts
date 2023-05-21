@@ -1,27 +1,22 @@
 import {sessionsRepository} from '../repositories/sessions-repository';
 import {CreateSessionModel} from '../models/sessions/CreateSessionModel';
 import {UpdateSessionModel} from '../models/sessions/UpdateSessionModel';
+import {VerifiedTokenType} from '../application/jwt-service';
 
 export const sessionsService = {
     async createSession(sessionData: CreateSessionModel): Promise<void> {
-        const isoDate = new Date().toISOString()
-
-        const data = {
-            ...sessionData,
-            createdAt: isoDate,
-            updatedAt: isoDate
-        }
-
-        await sessionsRepository.createSession(data)
+        await sessionsRepository.createSession(sessionData)
     },
 
-    async updateSession(sessionId: string, sessionData: UpdateSessionModel): Promise<boolean> {
-        const updatedAt = new Date().toISOString()
-
-        return sessionsRepository.updateSession(sessionId, sessionData, updatedAt)
+    async updateSession(deviceId: string, sessionData: UpdateSessionModel): Promise<boolean> {
+        return sessionsRepository.updateSession(deviceId, sessionData)
     },
 
-    async deleteSession(sessionId: string): Promise<boolean> {
-        return sessionsRepository.deleteSession(sessionId)
+    async deleteSession(deviceId: string): Promise<boolean> {
+        return sessionsRepository.deleteSession(deviceId)
+    },
+
+    async terminateAllOtherDeviceSessions(verifiedData: VerifiedTokenType): Promise<boolean> {
+        return sessionsRepository.deleteAllOtherSessions(verifiedData.id, verifiedData.deviceId)
     }
 }
