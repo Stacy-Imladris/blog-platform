@@ -27,7 +27,7 @@ export const getSessionsRouter = () => {
         const mappedSessions = sessions.map(session => ({
             ip: session.ip,
             title: session.deviceName,
-            lastActiveDate: session.iat,
+            lastActiveDate: new Date(session.iat).toISOString(),
             deviceId: session.deviceId,
         }))
 
