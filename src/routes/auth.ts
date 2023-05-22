@@ -32,6 +32,7 @@ import {cookiesMiddleware} from '../middlewares/cookies-middleware';
 import {getFirstTwoPartsOfJwtToken} from '../utils/getFirstTwoPartsOfJwtToken';
 import {parseJwt} from '../utils/parseJwt';
 import {rateLimitMiddleware} from '../middlewares/rate-limit-middleware';
+import {extractIpAddress} from '../utils/extractIpAddress';
 
 const cookiesOptions = {
     httpOnly: true,
@@ -45,7 +46,7 @@ export const getAuthRouter = () => {
         const {loginOrEmail, password} = req.body
 
         const deviceName: string = req.headers['user-agent'] ?? 'unknown'
-        const ip: string = req.ip ?? '::1'
+        const ip: string = extractIpAddress(req)
 
         const user = await authService.checkCredentials(loginOrEmail, password)
 
@@ -80,7 +81,7 @@ export const getAuthRouter = () => {
         const refreshToken = req.cookies.refreshToken
 
         const deviceName: string = req.headers['user-agent'] ?? 'unknown'
-        const ip: string = req.ip ?? '::1'
+        const ip: string = extractIpAddress(req)
 
         const verifiedData = await jwtService.verifyUserByToken(refreshToken)
 
