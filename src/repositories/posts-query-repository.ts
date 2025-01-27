@@ -2,7 +2,7 @@ import {exclusionMongoId, postsCollection} from '../db/db';
 import {Filter, ObjectId} from 'mongodb';
 import {PostViewModel} from '../models/posts/PostViewModel';
 import {QueryPostsModel} from '../models/posts/QueryPostsModel';
-import {QueryResultType} from '../types';
+import {Nullable, QueryResultType} from '../types';
 
 export const postsQueryRepository = {
     async findPosts(params: Required<QueryPostsModel>, blogId?: string): Promise<QueryResultType<PostViewModel>> {
@@ -32,11 +32,11 @@ export const postsQueryRepository = {
         }
     },
 
-    async findPostById(id: string): Promise<PostViewModel | null> {
+    async findPostById(id: string): Promise<Nullable<PostViewModel>> {
         return await postsCollection.findOne({id}, exclusionMongoId)
     },
 
-    async findPostByMongoId(_id: ObjectId): Promise<PostViewModel | null> {
+    async findPostByMongoId(_id: ObjectId): Promise<Nullable<PostViewModel>> {
         return await postsCollection.findOne({_id}, exclusionMongoId)
     }
 }

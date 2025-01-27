@@ -1,6 +1,6 @@
 import {commentsCollection, commentsProjection} from '../db/db';
 import {Filter, ObjectId} from 'mongodb';
-import {QueryResultType} from '../types';
+import {Nullable, QueryResultType} from '../types';
 import {CommentViewModel} from '../models/comments/CommentViewModel';
 import {QueryCommentsModel} from '../models/comments/QueryCommentsModel';
 
@@ -32,11 +32,11 @@ export const commentsQueryRepository = {
         }
     },
 
-    async findCommentById(id: string): Promise<CommentViewModel | null> {
+    async findCommentById(id: string): Promise<Nullable<CommentViewModel>> {
         return await commentsCollection.findOne({id}, commentsProjection)
     },
 
-    async findCommentByMongoId(_id: ObjectId): Promise<CommentViewModel | null> {
+    async findCommentByMongoId(_id: ObjectId): Promise<Nullable<CommentViewModel>> {
         return await commentsCollection.findOne({_id}, commentsProjection)
     }
 }

@@ -7,7 +7,7 @@ import {CommentModel} from '../models/comments/CommentModel';
 import {SessionModel} from '../models/sessions/SessionModel';
 import {RateModel} from '../models/rate/RateModel';
 
-const mongoUri = settings.MONGO_URI || 'mongodb://localhost:27017/blog-platform-local'
+const mongoUri = /*settings.MONGO_URI || */'mongodb://localhost:27017/blog-platform-local'
 
 const client = new MongoClient(mongoUri)
 
@@ -28,7 +28,7 @@ export const postsCollection = db.collection<PostModel>('posts');
 export async function runDB() {
     try {
         await client.connect()
-        console.log('Connected successfully to mongo server')
+        console.log(`Connected successfully to mongo server: ${mongoUri}`)
     } catch {
         console.log('Connection to mongo server failed')
         await client.close()

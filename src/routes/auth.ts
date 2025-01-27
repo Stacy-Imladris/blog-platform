@@ -95,8 +95,8 @@ export const getAuthRouter = () => {
         const accessToken = await jwtService.createJWT(user)
         const newRefreshToken = await jwtService.createRefreshJWT(user, verifiedData.deviceId)
 
-        const refreshTokenPayload = getFirstTwoPartsOfJwtToken(refreshToken)
-        const {iat, exp} = parseJwt(refreshToken)
+        const refreshTokenPayload = getFirstTwoPartsOfJwtToken(newRefreshToken)
+        const {iat, exp} = parseJwt(newRefreshToken)
 
         await sessionsService.updateSession(verifiedData.deviceId, {
             userId: user.id,

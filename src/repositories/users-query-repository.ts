@@ -1,4 +1,4 @@
-import {QueryResultType} from '../types';
+import {type Nullable, QueryResultType} from '../types';
 import {UserViewModel} from '../models/users/UserViewModel';
 import {QueryUsersModel} from '../models/users/QueryUsersModel';
 import {userProjection, usersCollection} from '../db/db';
@@ -42,7 +42,7 @@ export const usersQueryRepository = {
         }
     },
 
-    async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserModel | null> {
+    async findUserByLoginOrEmail(loginOrEmail: string): Promise<Nullable<UserModel>> {
         return await usersCollection.findOne({
             $or: [
                 {login: loginOrEmail},
@@ -60,19 +60,19 @@ export const usersQueryRepository = {
         }
     },
 
-    async findUserByConfirmationCode(code: string): Promise<UserModel | null> {
+    async findUserByConfirmationCode(code: string): Promise<Nullable<UserModel>> {
         return await usersCollection.findOne({'emailConfirmation.confirmationCode': code})
     },
 
-    async findUserById(id: string): Promise<UserViewModel | null> {
+    async findUserById(id: string): Promise<Nullable<UserViewModel>> {
         return await usersCollection.findOne({id}, userProjection)
     },
 
-    async findUserByMongoId(_id: ObjectId): Promise<UserViewModel | null> {
+    async findUserByMongoId(_id: ObjectId): Promise<Nullable<UserViewModel>> {
         return await usersCollection.findOne({_id}, userProjection)
     },
 
-    async findUserByMongoIdWithoutProjection(_id: ObjectId): Promise<UserModel | null> {
+    async findUserByMongoIdWithoutProjection(_id: ObjectId): Promise<Nullable<UserModel>> {
         return await usersCollection.findOne({_id})
     }
 }

@@ -8,5 +8,5 @@ export const settings = {
     BASIC_AUTH_TOKEN: process.env.BASIC_AUTH_TOKEN || 'YWRtaW46cXdlcnR5',
     JWT_SECRET: process.env.JWT_SECRET || '123',
     SMTP_LOGIN: process.env.SMTP_LOGIN || 'ada.davis27@gmail.com',
-    SMTP_PASSWORD: process.env.SMTP_PASSWORD || 'nhxvshjxbzhyimtc',
+    SMTP_PASSWORD: process.env.SMTP_PASSWORD || 'xupgweuomtmzthsv',
 }
